@@ -83,15 +83,6 @@ public class GestorBDD {
         return respuestas;
     }
     
-    /**
-     * Función que ejecuta el comando que recibe. Asignará los datos al comando
-     * usando los variables de los objetos opcionales recibidos.
-     *
-     * @param conn - objeto Connection.
-     * @param sql - el sql a ejecutar, con los valores por definir.
-     * @param articulo - el objeto Articulo que contiene los valores.
-     * @return boolean[] que indica cuales se han ejecutado de forma exitoso.
-     */
     public static boolean ejecutarCRUD(Connection conn, String sql, Articulo articulo) {
         int filasAfectadas = 0;
         try {
@@ -103,27 +94,15 @@ public class GestorBDD {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-
         return filasAfectadas>0;
     }
     
-    /**
-     * Función que ejecuta el comando que recibe. Asignará los datos al comando
-     * usando los variables de los objetos opcionales recibidos.
-     *
-     * @param conn - objeto Connection.
-     * @param sql - el sql a ejecutar, con los valores por definir.
-     * @param venta - el objeto Venta que contiene los valores.
-     * @return boolean[] que indica cuales se han ejecutado de forma exitoso.
-     */
     public static boolean ejecutarCRUD(Connection conn, String sql, Venta venta) {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setDate(1, venta.getFecha());
-            if (sql.trim().startsWith("UPDATE") || sql.trim().startsWith("DELETE")) {
-                pstmt.setInt(2, venta.getID());
-            }
+            pstmt.setInt(2, venta.getID());
             filasAfectadas = pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
@@ -132,19 +111,31 @@ public class GestorBDD {
         return filasAfectadas>0;
     }
 
-    public static Articulo[] recuperarArticulos(Connection conn) {
+    public static boolean ejecutarCRUD(Connection conn, String sql, int id_venta, int id_articulo) {
+        int filasAfectadas = 0;
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, id_venta);
+            pstmt.setInt(2, id_articulo);
+            filasAfectadas = pstmt.executeUpdate();
+        } catch (SQLException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return filasAfectadas>0;
+    }
+    
+    public static ResultSet recuperarElementos(Connection conn, String sql) {
         try {
             Statement stmt = conn.createStatement();
-            ResultSet rs = stmt.executeQuery(SQL.sql_leer_articulo);
-            ArrayList<Articulo> articulos = new ArrayList<>();
-            while (rs.next()) {
-//                System.out.println(rs.getInt("id") +  "\t" + 
-//                                   rs.getString("nombre") + "\t" +
-//                                  rs.getFloat("precio"));
-                articulos.add(new Articulo(rs.getInt("id"), rs.getString("nombre"), rs.getBigDecimal("precio")));
-            }
+            ResultSet rs = stmt.executeQuery(sql);
+            return rs;
             
-            return articulos.toArray(new Articulo[0]);
+//            ArrayList<Articulo> articulos = new ArrayList<>();
+//            while (rs.next()) {
+//                articulos.add(new Articulo(rs.getInt("id"), rs.getString("nombre"), rs.getBigDecimal("precio")));
+//            }
+            
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
@@ -164,50 +155,50 @@ public class GestorBDD {
         }
         return respuesta;
     }
-
-    public static void main(String[] args) {
-        GestorBDD gestor = new GestorBDD();
-        Connection conn = gestor.conectar();
-        
-        Articulo articulo_test = new Articulo(70, "HaoenQPro", BigDecimal.valueOf(69.69));
-        
-        //ORIGINAL
-        Articulo[] lista_articulos = recuperarArticulos(conn);
-        System.out.println("primer Print");
-        for (int i = 0; i< lista_articulos.length; i++) {
-            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-        }
-        System.out.println("---");
-        //CREAR
-        ejecutarCRUD(conn, SQL.sql_insertar_articulo, articulo_test);
-        
-        lista_articulos = recuperarArticulos(conn);
-        System.out.println("segundo Print");
-        for (int i = 0; i< lista_articulos.length; i++) {
-            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-        }
-        System.out.println("---");
-        //MODIFICAR
-        articulo_test.setNombre("Hamogus");
-        articulo_test.setPrecio(BigDecimal.valueOf(12.00));
-        ejecutarCRUD(conn, SQL.sql_modificar_articulo, articulo_test);
-        
-        lista_articulos = recuperarArticulos(conn);
-        System.out.println("tercer Print");
-        for (int i = 0; i< lista_articulos.length; i++) {
-            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-        }
-        System.out.println("---");
-        //BORRAR
-        ejecutarCRUD(conn, SQL.sql_borrar_articulo, articulo_test);
-        
-        lista_articulos = recuperarArticulos(conn);
-        System.out.println("tercer Print");
-        for (int i = 0; i< lista_articulos.length; i++) {
-            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-        }
-        System.out.println("---");
-        
-        GestorBDD.desconectar(conn);
-    }
+    
+//    public static void main(String[] args) {
+//        GestorBDD gestor = new GestorBDD();
+//        Connection conn = gestor.conectar();
+//        
+//        Articulo articulo_test = new Articulo(70, "HaoenQPro", BigDecimal.valueOf(69.69));
+//        
+//        //ORIGINAL
+//        Articulo[] lista_articulos = recuperarArticulos(conn);
+//        System.out.println("primer Print");
+//        for (int i = 0; i< lista_articulos.length; i++) {
+//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
+//        }
+//        System.out.println("---");
+//        //CREAR
+//        ejecutarCRUD(conn, SQL.sql_insertar_articulo, articulo_test);
+//        
+//        lista_articulos = recuperarArticulos(conn);
+//        System.out.println("segundo Print");
+//        for (int i = 0; i< lista_articulos.length; i++) {
+//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
+//        }
+//        System.out.println("---");
+//        //MODIFICAR
+//        articulo_test.setNombre("Hamogus");
+//        articulo_test.setPrecio(BigDecimal.valueOf(12.00));
+//        ejecutarCRUD(conn, SQL.sql_modificar_articulo, articulo_test);
+//        
+//        lista_articulos = recuperarArticulos(conn);
+//        System.out.println("tercer Print");
+//        for (int i = 0; i< lista_articulos.length; i++) {
+//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
+//        }
+//        System.out.println("---");
+//        //BORRAR
+//        ejecutarCRUD(conn, SQL.sql_borrar_articulo, articulo_test);
+//        
+//        lista_articulos = recuperarArticulos(conn);
+//        System.out.println("tercer Print");
+//        for (int i = 0; i< lista_articulos.length; i++) {
+//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
+//        }
+//        System.out.println("---");
+//        
+//        GestorBDD.desconectar(conn);
+//    }
 }
