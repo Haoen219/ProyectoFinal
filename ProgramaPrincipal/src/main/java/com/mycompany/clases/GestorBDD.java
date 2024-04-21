@@ -111,12 +111,13 @@ public class GestorBDD {
         return filasAfectadas>0;
     }
 
-    public static boolean ejecutarCRUD(Connection conn, String sql, int id_venta, int id_articulo) {
+    public static boolean ejecutarCRUD(Connection conn, String sql, int id_venta, int id_articulo, int cantidad) {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, id_venta);
-            pstmt.setInt(2, id_articulo);
+            pstmt.setInt(1, cantidad);
+            pstmt.setInt(2, id_venta);
+            pstmt.setInt(3, id_articulo);
             filasAfectadas = pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());
