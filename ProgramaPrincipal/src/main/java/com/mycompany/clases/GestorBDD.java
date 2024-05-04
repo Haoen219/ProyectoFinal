@@ -4,6 +4,7 @@
  */
 package clases;
 
+import com.mycompany.clases.Articulo;
 import SQL.SQL;
 
 import java.math.BigDecimal;
