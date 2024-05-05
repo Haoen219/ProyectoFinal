@@ -25,21 +25,21 @@ public class SQL {
     //Tablas nuevas
     public static String sql_tabla_articulo
             = "CREATE TABLE IF NOT EXISTS " + NOMBRE_ARTICULOS + " (\n"
-            + "    id INTEGER PRIMARY KEY,\n"
+            + "    id BIGINT PRIMARY KEY,\n"
             + "   " + ARTICULOS_NOMBRE + " TEXT NOT NULL,\n"
             + "   " + ARTICULOS_PRECIO + " DECIMAL\n"
             + ");";
 
     public static String sql_tabla_venta
             = "CREATE TABLE IF NOT EXISTS " + NOMBRE_VENTAS + " (\n"
-            + "    id INTEGER PRIMARY KEY,\n"
+            + "    id BIGINT PRIMARY KEY,\n"
             + "   " + VENTAS_FECHA + " DATE\n"
             + ");";
 
     public static String sql_tabla_venta_articulo
             = "CREATE TABLE IF NOT EXISTS " + NOMBRE_VENTA_ARTICULO + " (\n"
-            + "   " + RELACION_VENTA_ID + " INTEGER,\n"
-            + "   " + RELACION_ARTICULO_ID + " INTEGER,\n"
+            + "   " + RELACION_VENTA_ID + " BIGINT,\n"
+            + "   " + RELACION_ARTICULO_ID + " BIGINT,\n"
             + "   " + RELACION_CANTIDAD + " INTEGER,\n"
             + "    FOREIGN KEY (" + RELACION_VENTA_ID + ") REFERENCES " + NOMBRE_VENTAS + "(id),\n"
             + "    FOREIGN KEY (" + RELACION_ARTICULO_ID + ") REFERENCES " + NOMBRE_ARTICULOS + "(id),\n"

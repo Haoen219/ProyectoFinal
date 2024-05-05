@@ -2,20 +2,17 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package clases;
+package com.mycompany.clases;
 
 import com.mycompany.clases.Articulo;
 import SQL.SQL;
 
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-
 /**
  *
  * @author haoen
@@ -90,7 +87,7 @@ public class GestorBDD {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, articulo.getNombre());
             pstmt.setBigDecimal(2, articulo.getPrecio());
-            pstmt.setInt(3, articulo.getID());
+            pstmt.setString(3, articulo.getID().toString());
             filasAfectadas = pstmt.executeUpdate();
         } catch (SQLException e) {
             System.out.println(e.getMessage());

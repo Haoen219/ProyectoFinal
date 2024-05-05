@@ -1,4 +1,4 @@
-package clases;
+package com.mycompany.clases;
 
 import java.sql.Date;
 

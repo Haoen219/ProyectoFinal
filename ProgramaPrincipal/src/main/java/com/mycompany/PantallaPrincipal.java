@@ -10,6 +10,7 @@ import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import javax.swing.JButton;
 import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
@@ -79,13 +80,21 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             jLabelError.setText("Error: valor no valido introducido.");
             return false;
         }
+        if (textoCampo1.length()>20) {
+            jLabelError.setText("Error: Valor no valido para Núm. Barra.");
+            return false;
+        }
+        if (textoCampo2.length()>10) {
+            jLabelError.setText("Error: valor no valido para Cantidad.");
+            return false;
+        }
 
         jLabelError.setText("");
         return true;
     }
 
     private void createNewTab() {
-        String[] columnNames = {"ID", "Nombre del artículo", "Precio", "Cantidad"};
+        String[] columnNames = {"ID", "Nombre del artículo", "Precio", "Cantidad Unitario", "Precio"};
 
         DefaultTableModel model = new DefaultTableModel(columnNames, 0);
         model.setColumnIdentifiers(columnNames);
@@ -112,13 +121,13 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     editar.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            JOptionPane.showMessageDialog(null, "Hola editar");
+                            JOptionPane.showMessageDialog(null, "Hola editar fila "+rowindex);
                         }
                     });
                     borrar.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            JOptionPane.showMessageDialog(null, "Hola borrar");
+                            JOptionPane.showMessageDialog(null, "Hola borrar fila "+rowindex);
                         }
                     });
 
@@ -486,7 +495,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void jButtonAgregarArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarArticuloActionPerformed
         if (validarCampos()) {
-            addArticulo(new Articulo(Integer.parseInt(jTextFieldNumBarra.getText()), "a", new BigDecimal(20.0)), Integer.parseInt(jTextFieldCantidad.getText()));
+            addArticulo(new Articulo(new BigInteger(jTextFieldNumBarra.getText()), "a", new BigDecimal(20.0)), Integer.parseInt(jTextFieldCantidad.getText()));
         }
     }//GEN-LAST:event_jButtonAgregarArticuloActionPerformed
 
