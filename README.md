@@ -1,19 +1,20 @@
-Este es el proyecto personal para el curso DAW2.
+# Proyecto 'Z Cash' - Registro de Cajas
 
-El programa se llamrá 'Z Cash' (zeta cash), un programa de registro de cajas.
-Operará con una Base De Datos SQLite para guardar los articulos y las ventas.
+## Descripción
+El proyecto consiste en un programa de registro de cajas llamado 'Z Cash' (zeta cash). Este programa operará utilizando una Base de Datos SQLite para almacenar los artículos y las ventas.
 
-Formado por 2 partes:
--Programa Principal:
-  -Interfáz de usuario para la operación principal.
-  -Realiza las operaciones sobre la BDD.
-  -Imprenta de ticket de venta.
--Programa Móvil:
-  -Interfáz básico.
-  -Acceso a la cámara.
-  -Comunicación con el porgrama principal.
+## Partes del Proyecto
 
-El programa móvil es un escaner de barra que se comunicará con el
-programa principal a travéz de una red local usando Sockets. Su
-funcionalidad será simplemente escanear una barra de código y
-enviar el código escaneado al ordenador.
+### Programa Principal:
+- Interfaz de usuario para la operación principal.
+- Realiza las operaciones sobre la Base de Datos.
+- Impresión de tickets de venta.
+
+### Programa Móvil:
+- Interfaz básica.
+- Acceso a la cámara.
+- Comunicación con el programa principal.
+
+El programa móvil actuará como un escáner de barras que se comunicará con el programa principal a través de una red local utilizando Sockets. Su funcionalidad principal será escanear un código de barras y enviar el código escaneado al ordenador.
+
+
