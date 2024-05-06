@@ -6,7 +6,7 @@ El proyecto consiste en un programa de registro de cajas llamado 'Z Cash' (zeta 
 ## Partes del Proyecto
 
 ### Programa Principal:
-El programa principal es donde el usuario tendrá la interacción principal con el programa y la mayoría de sus funcionalidades. EL programa principal puede funcionar independientemente, aunque no se use el programa móvil.
+El programa principal es donde el usuario tendrá la interacción principal con el programa y la mayoría de sus funcionalidades. El programa principal puede funcionar independientemente, aunque no se use el programa móvil.
 - Interfaz de usuario para la operación principal.
 - Realiza las operaciones sobre la Base de Datos.
 - Impresión de tickets de venta.
