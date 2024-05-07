@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.SQL to edit this template
  */
-package SQL;
+package com.mycompany.SQL;
 
 /**
  *
@@ -10,17 +10,17 @@ package SQL;
  */
 public class SQL {
     
-    static final String NOMBRE_ARTICULOS = "articulos";
-    static final String ARTICULOS_NOMBRE = "nombre";
-    static final String ARTICULOS_PRECIO = "precio";
+    public static final String NOMBRE_ARTICULOS = "articulos";
+    public static final String ARTICULOS_NOMBRE = "nombre";
+    public static final String ARTICULOS_PRECIO = "precio";
     
-    static final String NOMBRE_VENTAS = "ventas";
-    static final String VENTAS_FECHA = "fecha";
+    public static final String NOMBRE_VENTAS = "ventas";
+    public static final String VENTAS_FECHA = "fecha";
     
-    static final String NOMBRE_VENTA_ARTICULO = "venta_articulo";
-    static final String RELACION_VENTA_ID = "venta_id";
-    static final String RELACION_ARTICULO_ID = "articulo_id";
-    static final String RELACION_CANTIDAD = "cantidad";
+    public static final String NOMBRE_VENTA_ARTICULO = "venta_articulo";
+    public static final String RELACION_VENTA_ID = "venta_id";
+    public static final String RELACION_ARTICULO_ID = "articulo_id";
+    public static final String RELACION_CANTIDAD = "cantidad";
 
     //Tablas nuevas
     public static String sql_tabla_articulo
@@ -48,6 +48,7 @@ public class SQL {
 
     //ARTICULOS
     public static String sql_leer_articulos = "SELECT * FROM " + NOMBRE_ARTICULOS;
+    public static String sql_leer_articulo_id = "SELECT * FROM " + NOMBRE_ARTICULOS + " WHERE id = ?";
     public static String sql_insertar_articulo = "INSERT INTO " + NOMBRE_ARTICULOS + "(" + ARTICULOS_NOMBRE + "," + ARTICULOS_PRECIO + ", id) VALUES(?,?,?)";
     public static String sql_modificar_articulo = "UPDATE " + NOMBRE_ARTICULOS + " SET " + ARTICULOS_NOMBRE + " = ? , " + ARTICULOS_PRECIO + " = ? WHERE id = ?";
     public static String sql_borrar_articulo = "DELETE FROM " + NOMBRE_ARTICULOS + " WHERE " + ARTICULOS_NOMBRE + " = ? AND " + ARTICULOS_PRECIO + " = ? AND id = ?";

@@ -198,6 +198,9 @@
               </Layout>
               <SubComponents>
                 <Component class="javax.swing.JTextField" name="jTextFieldNumBarra">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="jTextFieldNumBarra.addActionListener(new ActionListener() {&#xa;    @Override&#xa;    public void actionPerformed(ActionEvent e) {&#xa;    // Aqu&#xed; puedes especificar el componente al que deseas mover el foco&#xa;        jTextFieldCantidad.requestFocusInWindow();&#xa;    }&#xa;});"/>
+                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabelNumBarra">
                   <Properties>
@@ -216,6 +219,7 @@
                   </Properties>
                   <Events>
                     <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonAgregarArticuloActionPerformed"/>
+                    <EventHandler event="keyPressed" listener="java.awt.event.KeyListener" parameters="java.awt.event.KeyEvent" handler="jButtonAgregarArticuloKeyPressed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabelIdVenta">
@@ -227,6 +231,9 @@
                   </Properties>
                 </Component>
                 <Component class="javax.swing.JTextField" name="jTextFieldCantidad">
+                  <AuxValues>
+                    <AuxValue name="JavaCodeGenerator_InitCodePre" type="java.lang.String" value="jTextFieldCantidad.addActionListener(new ActionListener() {&#xa;    @Override&#xa;    public void actionPerformed(ActionEvent e) {&#xa;    // Aqu&#xed; puedes especificar el componente al que deseas mover el foco&#xa;        jButtonAgregarArticulo.requestFocusInWindow();&#xa;    }&#xa;});"/>
+                  </AuxValues>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabelCantidad">
                   <Properties>
@@ -264,7 +271,7 @@
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" attributes="0">
                                       <Component id="jButtonConfirmarVEnta" alignment="1" min="-2" pref="203" max="-2" attributes="0"/>
-                                      <Component id="jButtonImprimirRecibo" alignment="1" min="-2" pref="203" max="-2" attributes="0"/>
+                                      <Component id="jButtonRecibir" alignment="1" min="-2" pref="203" max="-2" attributes="0"/>
                                       <Component id="jButtonMostrarRecibo" alignment="1" min="-2" pref="203" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace min="-2" pref="17" max="-2" attributes="0"/>
@@ -300,7 +307,7 @@
                               <Group type="102" alignment="1" attributes="0">
                                   <Component id="jButtonMostrarRecibo" min="-2" pref="41" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="jButtonImprimirRecibo" min="-2" pref="41" max="-2" attributes="0"/>
+                                  <Component id="jButtonRecibir" min="-2" pref="41" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
                                   <Component id="jButtonConfirmarVEnta" min="-2" pref="41" max="-2" attributes="0"/>
                               </Group>
@@ -376,15 +383,15 @@
                     <Property name="text" type="java.lang.String" value="Sistema:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JButton" name="jButtonImprimirRecibo">
+                <Component class="javax.swing.JButton" name="jButtonRecibir">
                   <Properties>
                     <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
                       <Font name="Segoe UI" size="18" style="0"/>
                     </Property>
-                    <Property name="text" type="java.lang.String" value="Imprimir recibo"/>
+                    <Property name="text" type="java.lang.String" value="Recibir pago"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonImprimirReciboActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jButtonRecibirActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JButton" name="jButtonMostrarRecibo">
