@@ -184,7 +184,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             jLabelError.setText("Error: valor no valido introducido.");
             return false;
         }
-        if (textoCampo1.length() > 20) {
+        if (textoCampo1.length() > 19) {    //19 porque en la BD BIGINT puede tener max. 19 dígitos.
             jLabelError.setText("Error: Valor no valido para Núm. Barra.");
             return false;
         }
