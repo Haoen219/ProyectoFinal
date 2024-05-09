@@ -3,6 +3,7 @@ package com.mycompany;
 import com.mycompany.SQL.SQL;
 import com.mycompany.clases.Articulo;
 import com.mycompany.clases.GestorBDD;
+import com.mycompany.clases.GestorClientes;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -15,6 +16,10 @@ import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.sql.Connection;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -32,6 +37,7 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import mdlaf.MaterialLookAndFeel;
+import org.openide.util.Exceptions;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -42,6 +48,8 @@ import mdlaf.MaterialLookAndFeel;
  * @author haoen
  */
 public class PantallaPrincipal extends javax.swing.JFrame {
+    private GestorClientes gestorClientes;
+    private Connection conn;
 
     private static void splashScreen() {
         SplashScreen splash = new SplashScreen();
@@ -56,13 +64,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         splash.dispose();
     }
 
-    private Connection conn;
 
     /**
      * Creates new form PantallaPrincipal
      */
     public PantallaPrincipal() {
         initComponents();
+        gestorClientes = new GestorClientes(this, 1234);
+        gestorClientes.start();
         conn = GestorBDD.conectar();
 
         //Crear shortcuts
@@ -269,7 +278,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         return false;
     }
 
-    public boolean addArticulo(Articulo articulo, int cantidad) {
+    public synchronized boolean addArticulo(Articulo articulo, int cantidad) {
         Articulo articulo_bdd = GestorBDD.recuperarArticuloID(conn, articulo.getID());
         if (articulo_bdd != null) {
             articulo = articulo_bdd;
@@ -631,6 +640,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jMenuBar1.add(jMenu2);
 
         jMenu3.setText("Ayuda");
+        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jMenu3MousePressed(evt);
+            }
+        });
         jMenuBar1.add(jMenu3);
 
         setJMenuBar(jMenuBar1);
@@ -660,7 +674,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
     private void jButtonAgregarArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarArticuloActionPerformed
         if (validarCampos()) {
-            addArticulo(new Articulo(new BigInteger(jTextFieldNumBarra.getText()), "a", new BigDecimal(20.69)), Integer.parseInt(jTextFieldCantidad.getText()));
+            addArticulo(new Articulo(new BigInteger(jTextFieldNumBarra.getText()), "", new BigDecimal(0)), Integer.parseInt(jTextFieldCantidad.getText()));
         }
     }//GEN-LAST:event_jButtonAgregarArticuloActionPerformed
 
@@ -696,6 +710,17 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jButtonAgregarArticuloKeyPressed
+
+    private void jMenu3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MousePressed
+        String ip = "";
+        try (final DatagramSocket datagramSocket = new DatagramSocket()) {
+            datagramSocket.connect(InetAddress.getByName("8.8.8.8"), 12345);
+            ip = datagramSocket.getLocalAddress().getHostAddress();
+        } catch (SocketException | UnknownHostException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        JOptionPane.showMessageDialog(null, ip, "Tu IP local", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_jMenu3MousePressed
 
     /**
      * @param args the command line arguments
