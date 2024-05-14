@@ -10,6 +10,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.net.ServerSocket;
 import java.net.Socket;
 import javax.swing.JOptionPane;
@@ -73,9 +75,9 @@ class ClienteHandler extends Thread {
 
             String entradaCliente;
             while ((entradaCliente = entrada.readLine()) != null) {
-                JOptionPane.showConfirmDialog(null, "Entrada del cliente: " + entradaCliente);
+//                JOptionPane.showConfirmDialog(null, "Entrada del cliente: " + entradaCliente);
                 
-//                parent.addArticulo(new Articulo(new BigInteger(entradaCliente), "", new BigDecimal(0)), 1);
+                parent.addArticulo(new Articulo(new BigInteger(entradaCliente), "", new BigDecimal(0)), 1);
             }
             System.out.println("Se ha desconectado cliente con IP: "+clienteSocket.getInetAddress());
         } catch (IOException e) {

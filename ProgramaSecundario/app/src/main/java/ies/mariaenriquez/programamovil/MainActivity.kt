@@ -1,7 +1,9 @@
 package ies.mariaenriquez.programamovil
 
+import android.app.Activity
 import android.os.Bundle
 import android.content.Context
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
@@ -32,7 +34,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val gestorCliente = GestorCliente(applicationContext)
+                    val gestorCliente = GestorCliente(this)
                     Tabla(gestorCliente)
                 }
             }
@@ -41,13 +43,25 @@ class MainActivity : ComponentActivity() {
 }
 
 fun Context.showSnackbar(message: String) {
-    (this as? AppCompatActivity)?.runOnUiThread {
-        Snackbar.make(
-            (this as AppCompatActivity).findViewById(android.R.id.content),
-            message,
-            Snackbar.LENGTH_LONG
-        ).show()
+    (this as? Activity)?.runOnUiThread {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
+}
+
+fun validarCampos(context: Context, texto: String): Boolean {
+    if (texto.isEmpty()) {
+        context.showSnackbar("Error: rellena los campos.")
+        return false
+    }
+    if (!texto.matches("[0-9]+".toRegex())) {
+        context.showSnackbar("Error: valor no válido introducido.")
+        return false
+    }
+    if (texto.length > 19) {    //19 porque en la BD BIGINT puede tener max. 19 dígitos.
+        context.showSnackbar("Error: Valor no válido para Núm. Barra.")
+        return false
+    }
+    return true
 }
 
 class GestorCliente(val context: Context) : Runnable {
@@ -79,9 +93,11 @@ class GestorCliente(val context: Context) : Runnable {
 
     fun enviarMensaje(message: String) {
         try {
-            writer?.write(message)
-            writer?.newLine()
-            writer?.flush()
+            if (validarCampos(context, message)){
+                writer?.write(message)
+                writer?.newLine()
+                writer?.flush()
+            }
         } catch (e: Exception) {
             e.printStackTrace()
             context.showSnackbar("Error al enviar mensaje: ${e.message}")
