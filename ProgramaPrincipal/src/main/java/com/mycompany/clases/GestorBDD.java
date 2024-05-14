@@ -4,6 +4,7 @@
  */
 package com.mycompany.clases;
 
+import static com.mycompany.Funciones.mostrarExcepcion;
 import com.mycompany.SQL.SQL;
 import java.math.BigInteger;
 
@@ -13,9 +14,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.JOptionPane;
-import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
 
 /**
  *
@@ -29,24 +27,6 @@ public class GestorBDD {
     public GestorBDD(String direccion) {
         //dirección indicada por el usuario
         this.direccion = direccion;
-    }
-    
-    public static void mostrarExcepcion(Exception ex) {
-        // Crear un JTextArea para mostrar el mensaje de la excepción
-        JTextArea textArea = new JTextArea(10, 30);
-        textArea.setEditable(false);
-        textArea.append("Se ha producido una excepción:\n\n");
-        textArea.append(ex.toString());
-        textArea.append("\n\nDetalles:\n\n");
-        for (StackTraceElement element : ex.getStackTrace()) {
-            textArea.append(element.toString() + "\n");
-        }
-
-        // Envolver el JTextArea en un JScrollPane para permitir el desplazamiento
-        JScrollPane scrollPane = new JScrollPane(textArea);
-
-        // Mostrar el mensaje de la excepción en un JOptionPane
-        JOptionPane.showMessageDialog(null, scrollPane, "Excepción", JOptionPane.ERROR_MESSAGE);
     }
 
     // Generador de conexiones

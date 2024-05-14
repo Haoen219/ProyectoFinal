@@ -6,8 +6,6 @@ package com.mycompany;
  */
 
 
-import java.awt.Image;
-import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
 /**
@@ -19,10 +17,6 @@ public class SplashScreen extends javax.swing.JDialog {
     /**
      * Creates new form SplashScreen
      */
-//    public SplashScreen(java.awt.Frame parent, boolean modal) {
-//        super(parent, modal);
-//        initComponents();
-//    }
     public SplashScreen() {
         initComponents();
         

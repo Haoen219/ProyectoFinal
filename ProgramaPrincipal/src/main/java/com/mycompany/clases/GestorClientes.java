@@ -4,8 +4,8 @@
  */
 package com.mycompany.clases;
 
+import static com.mycompany.Funciones.mostrarExcepcion;
 import com.mycompany.PantallaPrincipal;
-import static com.mycompany.clases.GestorBDD.mostrarExcepcion;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

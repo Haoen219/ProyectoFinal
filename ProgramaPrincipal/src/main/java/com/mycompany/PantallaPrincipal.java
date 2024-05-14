@@ -37,7 +37,6 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import mdlaf.MaterialLookAndFeel;
-import org.openide.util.Exceptions;
 
 /*
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
@@ -48,6 +47,7 @@ import org.openide.util.Exceptions;
  * @author haoen
  */
 public class PantallaPrincipal extends javax.swing.JFrame {
+
     private GestorClientes gestorClientes;
     private Connection conn;
 
@@ -63,7 +63,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         splash.dispose();
     }
-
 
     /**
      * Creates new form PantallaPrincipal
@@ -154,19 +153,23 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             String precioStr = textFieldPrecio.getText();
 
             if (nombre.isEmpty() || precioStr.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Error: rellena los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return customDialogoNuevo(articulo);
+            }
+            if (!precioStr.matches("[0-9]?[0-9]?(\\.[0-9][0-9]?)?")) {
                 JOptionPane.showMessageDialog(null, "Error: valor no valido introducido.", "Error", JOptionPane.ERROR_MESSAGE);
                 return customDialogoNuevo(articulo);
-            } else {
-                try {
-                    double precio = Double.parseDouble(precioStr);
+            }
+            
+            try {
+                double precio = Double.parseDouble(precioStr);
 
-                    articulo.setNombre(nombre);
-                    articulo.setPrecio(new BigDecimal(precio));
-                    return true;
-                } catch (NumberFormatException ex) {
-                    JOptionPane.showMessageDialog(null, "Error: el precio debe ser\nun número válido.", "Error", JOptionPane.ERROR_MESSAGE);
-                    return customDialogoNuevo(articulo);
-                }
+                articulo.setNombre(nombre);
+                articulo.setPrecio(new BigDecimal(precio));
+                return true;
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Error: el precio debe ser\nun número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                return customDialogoNuevo(articulo);
             }
         }
         return false;
@@ -360,10 +363,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jScrollPane1 = new javax.swing.JScrollPane();
         jTabbedPane = new javax.swing.JTabbedPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenu4 = new javax.swing.JMenu();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
+        jMenuArticulos = new javax.swing.JMenu();
+        jMenuVentas = new javax.swing.JMenu();
+        jMenuConexion = new javax.swing.JMenu();
+        jMenuConfiguracion = new javax.swing.JMenu();
+        jMenuAyuda = new javax.swing.JMenu();
 
         jButton1.setText("jButton1");
 
@@ -630,22 +634,30 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 .addComponent(jPanelControles, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
 
-        jMenu1.setText("Artículos");
-        jMenuBar1.add(jMenu1);
+        jMenuArticulos.setText("Artículos");
+        jMenuBar1.add(jMenuArticulos);
 
-        jMenu4.setText("Ventas");
-        jMenuBar1.add(jMenu4);
+        jMenuVentas.setText("Ventas");
+        jMenuBar1.add(jMenuVentas);
 
-        jMenu2.setText("Configuración");
-        jMenuBar1.add(jMenu2);
-
-        jMenu3.setText("Ayuda");
-        jMenu3.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jMenu3MousePressed(evt);
+        jMenuConexion.setText("Conexión");
+        jMenuConexion.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuConexionMouseClicked(evt);
             }
         });
-        jMenuBar1.add(jMenu3);
+        jMenuBar1.add(jMenuConexion);
+
+        jMenuConfiguracion.setText("Configuración");
+        jMenuBar1.add(jMenuConfiguracion);
+
+        jMenuAyuda.setText("Ayuda");
+        jMenuAyuda.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mousePressed(java.awt.event.MouseEvent evt) {
+                jMenuAyudaMousePressed(evt);
+            }
+        });
+        jMenuBar1.add(jMenuAyuda);
 
         setJMenuBar(jMenuBar1);
 
@@ -711,16 +723,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jButtonAgregarArticuloKeyPressed
 
-    private void jMenu3MousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenu3MousePressed
-        String ip = "";
-        try (final DatagramSocket datagramSocket = new DatagramSocket()) {
-            datagramSocket.connect(InetAddress.getByName("8.8.8.8"), 12345);
-            ip = datagramSocket.getLocalAddress().getHostAddress();
-        } catch (SocketException | UnknownHostException ex) {
-            Exceptions.printStackTrace(ex);
-        }
-        JOptionPane.showMessageDialog(null, ip, "Tu IP local", JOptionPane.INFORMATION_MESSAGE);
-    }//GEN-LAST:event_jMenu3MousePressed
+    private void jMenuAyudaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuAyudaMousePressed
+        
+    }//GEN-LAST:event_jMenuAyudaMousePressed
+
+    private void jMenuConexionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuConexionMouseClicked
+        DialogoConexion dialogo = new DialogoConexion(this, true);
+        dialogo.setVisible(true);
+    }//GEN-LAST:event_jMenuConexionMouseClicked
 
     /**
      * @param args the command line arguments
@@ -782,11 +792,12 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelRecibido;
     private javax.swing.JLabel jLabelSistema;
     private javax.swing.JLabel jLabelTotal;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
-    private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenuArticulos;
+    private javax.swing.JMenu jMenuAyuda;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuConexion;
+    private javax.swing.JMenu jMenuConfiguracion;
+    private javax.swing.JMenu jMenuVentas;
     private javax.swing.JPanel jPanelBase;
     private javax.swing.JPanel jPanelControles;
     private javax.swing.JPanel jPanelIntroducir;
@@ -798,4 +809,5 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JTextField jTextFieldCantidad;
     private javax.swing.JTextField jTextFieldNumBarra;
     // End of variables declaration//GEN-END:variables
+
 }
