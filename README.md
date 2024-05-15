@@ -1,6 +1,6 @@
 # Z Cash
 
-<img src="[URL de la imagen](https://github.com/Haoen219/ProyectoFinal/blob/main/logo/logo.png)" alt="Logo del proyecto" width="100" height="100">
+<img src="https://github.com/Haoen219/ProyectoFinal/blob/main/logo/logo.png" alt="Logo del proyecto" width="100" height="100">
 
 Este es un Proyecto de Fin de Curso DAM2 que consta de dos programas: uno principal y otro secundario.
 
