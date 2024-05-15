@@ -1,5 +1,7 @@
 # Z Cash
 
+![Logo del proyecto](https://github.com/Haoen219/ProyectoFinal/blob/main/logo/logo.png)
+
 Este es un Proyecto de Fin de Curso DAM2 que consta de dos programas: uno principal y otro secundario.
 
 El programa principal opera como un registro de cajas así como un gestor de ventas y artículos.
