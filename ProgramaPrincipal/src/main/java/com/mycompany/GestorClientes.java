@@ -2,10 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.mycompany.clases;
+package com.mycompany;
 
-import static com.mycompany.Funciones.mostrarExcepcion;
+import static com.mycompany.clases.Funciones.mostrarExcepcion;
 import com.mycompany.PantallaPrincipal;
+import com.mycompany.SQL.Articulo;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

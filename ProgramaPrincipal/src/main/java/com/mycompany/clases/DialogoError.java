@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-package com.mycompany;
+package com.mycompany.clases;
 
 import java.awt.Image;
 import javax.swing.Icon;
@@ -21,8 +21,10 @@ public class DialogoError extends javax.swing.JDialog {
      */
     public DialogoError(String mensaje) {
         initComponents();
-        
         this.mensaje = mensaje;
+        
+        ImageIcon logo = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
+        this.setIconImage(logo.getImage());
         
         ImageIcon imagen = new ImageIcon("src/main/java/com/mycompany/imagenes/alert-circle.png");
         Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(61, 61, Image.SCALE_DEFAULT));
@@ -52,7 +54,6 @@ public class DialogoError extends javax.swing.JDialog {
         setTitle("Error");
         setAlwaysOnTop(true);
         setMinimumSize(new java.awt.Dimension(454, 301));
-        setPreferredSize(new java.awt.Dimension(490, 320));
 
         jLabelIcono.setMinimumSize(new java.awt.Dimension(61, 61));
         jLabelIcono.setPreferredSize(new java.awt.Dimension(61, 61));
@@ -67,6 +68,7 @@ public class DialogoError extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Ha ocurrido un error:");
 
+        jTextArea1.setEditable(false);
         jTextArea1.setColumns(20);
         jTextArea1.setRows(5);
         jScrollPane1.setViewportView(jTextArea1);
@@ -84,9 +86,9 @@ public class DialogoError extends javax.swing.JDialog {
                         .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 332, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 332, Short.MAX_VALUE))
                         .addGap(2, 2, 2)))
-                .addContainerGap(25, Short.MAX_VALUE))
+                .addGap(25, 25, 25))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -97,10 +99,10 @@ public class DialogoError extends javax.swing.JDialog {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 191, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 191, Short.MAX_VALUE)))
                 .addGap(14, 14, 14)
                 .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 33, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(52, Short.MAX_VALUE))
+                .addGap(52, 52, 52))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -111,7 +113,7 @@ public class DialogoError extends javax.swing.JDialog {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+            .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         setSize(new java.awt.Dimension(470, 344));

@@ -1,4 +1,4 @@
-package com.mycompany;
+package com.mycompany.clases;
 
 
 
@@ -29,7 +29,7 @@ public class Funciones {
 //
 //        // Mostrar el mensaje de la excepción en un JOptionPane
 //        JOptionPane.showMessageDialog(null, scrollPane, "Excepción", JOptionPane.ERROR_MESSAGE);
-        DialogoError error = new DialogoError(ex.getMessage());
+        DialogoError error = new DialogoError(ex.toString());
         error.setVisible(true);
         
     }
