@@ -1,6 +1,10 @@
 # Z Cash
 
-Este es un Proyecto de Fin de Curso DAM2 que consta de dos programas: uno principal y otro secundario. El programa principal opera como un registro de cajas así como un gestor de ventas y artículos. Mientras tanto, el programa secundario opera en un dispositivo móvil y funciona como un escáner para los artículos.
+Este es un Proyecto de Fin de Curso DAM2 que consta de dos programas: uno principal y otro secundario.
+
+El programa principal opera como un registro de cajas así como un gestor de ventas y artículos.
+Mientras tanto, el programa secundario opera en un dispositivo móvil y funciona como un escáner para los artículos.
+
 Los dos programas se comunican a travéz de una red local con Sockets.
 ## Funcionalidades principales
 
