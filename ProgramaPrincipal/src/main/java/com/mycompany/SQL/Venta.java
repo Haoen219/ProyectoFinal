@@ -1,25 +1,26 @@
 package com.mycompany.SQL;
 
-import java.sql.Date;
+import java.math.BigInteger;
+import java.time.LocalDateTime;
 
 public class Venta {
-    private final int ID;
-    private Date fecha;
+    private final BigInteger ID;
+    private LocalDateTime fecha;
 
-    public Venta (int id, Date fecha){
+    public Venta (BigInteger id, LocalDateTime fecha){
         this.ID = id;
         this.fecha = fecha;
     }
     
     //GETTER
-    public int getID() {
+    public BigInteger getID() {
         return this.ID;
     }
-    public Date getFecha() {
+    public LocalDateTime getFecha() {
         return this.fecha;
     }
     //SETTER
-    public void setPrecio(Date fecha) {
+    public void setFecha(LocalDateTime fecha) {
         this.fecha = fecha;
     }
 

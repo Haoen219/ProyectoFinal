@@ -33,7 +33,7 @@ public class SQL {
     public static String sql_tabla_venta
             = "CREATE TABLE IF NOT EXISTS " + NOMBRE_VENTAS + " (\n"
             + "    id BIGINT PRIMARY KEY,\n"
-            + "   " + VENTAS_FECHA + " DATE\n"
+            + "   " + VENTAS_FECHA + " DATETIME\n"
             + ");";
 
     public static String sql_tabla_venta_articulo
@@ -51,16 +51,16 @@ public class SQL {
     public static String sql_leer_articulo_id = "SELECT * FROM " + NOMBRE_ARTICULOS + " WHERE id = ?";
     public static String sql_insertar_articulo = "INSERT INTO " + NOMBRE_ARTICULOS + "(" + ARTICULOS_NOMBRE + "," + ARTICULOS_PRECIO + ", id) VALUES(?,?,?)";
     public static String sql_modificar_articulo = "UPDATE " + NOMBRE_ARTICULOS + " SET " + ARTICULOS_NOMBRE + " = ? , " + ARTICULOS_PRECIO + " = ? WHERE id = ?";
-    public static String sql_borrar_articulo = "DELETE FROM " + NOMBRE_ARTICULOS + " WHERE " + ARTICULOS_NOMBRE + " = ? AND " + ARTICULOS_PRECIO + " = ? AND id = ?";
+    public static String sql_borrar_articulo = "DELETE FROM " + NOMBRE_ARTICULOS + " WHERE id = ?";
     //VENTAS
     public static String sql_leer_ventas = "SELECT * FROM " + NOMBRE_VENTAS;
     public static String sql_insertar_venta = "INSERT INTO " + NOMBRE_VENTAS + "(" + VENTAS_FECHA + ", id) VALUES(?,?)";
-    public static String sql_modificar_venta = "UPDATE " + NOMBRE_VENTAS + " SET " + VENTAS_FECHA + " = ? , WHERE id = ?";
-    public static String sql_borrar_venta = "DELETE FROM " + NOMBRE_VENTAS + " WHERE " + VENTAS_FECHA + " = ? AND id = ?";
+    public static String sql_modificar_venta = "UPDATE " + NOMBRE_VENTAS + " SET " + VENTAS_FECHA + " = ?, WHERE id = ?";
+    public static String sql_borrar_venta = "DELETE FROM " + NOMBRE_VENTAS + " WHERE id = ?";
     //RELACIONES
     public static String sql_leer_relaciones = "SELECT * FROM " + NOMBRE_VENTA_ARTICULO;
     public static String sql_leer_relacion = "SELECT * FROM " + NOMBRE_VENTA_ARTICULO + " WHERE " + RELACION_CANTIDAD + " = ? AND " + RELACION_VENTA_ID + " = ? AND " + RELACION_ARTICULO_ID + " = ?";
     public static String sql_insertar_relacion = "INSERT INTO " + NOMBRE_VENTA_ARTICULO + "(" + RELACION_CANTIDAD + "," + RELACION_VENTA_ID + "," + RELACION_ARTICULO_ID + ") VALUES(?,?,?)";
     public static String sql_modificar_relacion = "UPDATE " + NOMBRE_VENTA_ARTICULO + " SET " + RELACION_CANTIDAD + " = ? , WHERE " + RELACION_VENTA_ID + " = ? AND " + RELACION_ARTICULO_ID + " = ?";
-    public static String sql_borrar_relacion = "DELETE FROM " + NOMBRE_VENTA_ARTICULO + " WHERE " + RELACION_CANTIDAD + " = ? AND " + RELACION_VENTA_ID + " = ? AND " + RELACION_ARTICULO_ID + " = ?";
+    public static String sql_borrar_relacion = "DELETE FROM " + NOMBRE_VENTA_ARTICULO + " WHERE " + RELACION_VENTA_ID + " = ? AND " + RELACION_ARTICULO_ID + " = ?";
 }

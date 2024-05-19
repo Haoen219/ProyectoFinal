@@ -33,10 +33,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import com.formdev.flatlaf.FlatLightLaf;
-import java.awt.event.KeyListener;
+import com.mycompany.SQL.Venta;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import javax.swing.JTabbedPane;
+import java.util.HashMap;
+import java.util.Map;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -66,7 +67,7 @@ class TablaCustom extends javax.swing.JTable {
         model.addTableModelListener(new TableModelListener() {
             @Override
             public void tableChanged(TableModelEvent e) {
-                parent.actualizarTotal(model);
+                parent.setTotal(calcularTotal());
             }
         });
         this.setModel(model);
@@ -101,7 +102,8 @@ class TablaCustom extends javax.swing.JTable {
                     editar.addActionListener(new ActionListener() {
                         @Override
                         public void actionPerformed(ActionEvent e) {
-                            parent.customDialogEditar(TablaCustom.this);
+                            parent.setTotal(calcularTotal());
+                            parent.setIdVenta(getID_VENTA());
                         }
                     });
                     borrar.addActionListener(new ActionListener() {
@@ -128,6 +130,19 @@ class TablaCustom extends javax.swing.JTable {
         }
 
         return total;
+    }
+
+    public Map<BigInteger, Integer> listarID() {
+        Map<BigInteger, Integer> ids = new HashMap<>() {
+        };
+
+        for (int i = 0; i < model.getRowCount(); i++) {
+            BigInteger id = (BigInteger) model.getValueAt(i, 0);
+            int cantidad = (int) model.getValueAt(i, 3);
+            ids.put(id, cantidad);
+        }
+
+        return ids;
     }
 }
 
@@ -160,11 +175,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     createNewTab();
                 }
                 if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
-                    int index = jTabbedPane.getSelectedIndex();
-                    if (jTabbedPane.getTabCount() > 1) {
-                        jTabbedPane.remove(index);
-                        jTabbedPane.setSelectedIndex(index - 1);
-                    }
+                    cerrarCurrentTab();
                 }
             }
             return false;
@@ -173,16 +184,39 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTabbedPane.addChangeListener(new ChangeListener() {
             @Override
             public void stateChanged(ChangeEvent e) {
-                JTabbedPane sourceTabbedPane = (JTabbedPane) e.getSource();
-                int selectedIndex = sourceTabbedPane.getSelectedIndex();
+                int index = jTabbedPane.getSelectedIndex();
 
-                // Obtener el componente del panel seleccionado
-                JScrollPane selectedComponent = (JScrollPane) sourceTabbedPane.getComponentAt(selectedIndex);
-                TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
-                
-                jLabelTotal_num.setText(table.calcularTotal().setScale(2, RoundingMode.HALF_EVEN) + "€");
+                if (index != jTabbedPane.getTabCount() - 1) {
+                    JScrollPane selectedComponent = (JScrollPane) jTabbedPane.getComponentAt(index);
+                    TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
+
+                    setTotal(table.calcularTotal());
+                    setIdVenta(table.getID_VENTA());
+                } else {
+                    setTotal(BigDecimal.ZERO);
+                    setIdVenta("");
+                }
+                jTextFieldDescuento.setText("");
+                jTextFieldRecibido.setText("");
+                jLabelDevolver_num.setText("0.0€");
+                jButtonConfirmarVenta.setEnabled(false);
             }
         });
+
+        createNewTab();
+    }
+
+    public void cerrarCurrentTab() {
+        int index = jTabbedPane.getSelectedIndex();
+        if (jTabbedPane.getTabCount() > 1 && index != jTabbedPane.getTabCount() - 1) {
+            jTabbedPane.remove(index);
+
+            if (index == 0) {
+                jTabbedPane.setSelectedIndex(index);
+            } else if (jTabbedPane.getTabCount() > 1) {
+                jTabbedPane.setSelectedIndex(index - 1);
+            }
+        }
     }
 
     public boolean customDialogEditar(JTable tabla) {
@@ -250,7 +284,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 JOptionPane.showMessageDialog(null, "Error: rellena los campos.", "Error", JOptionPane.ERROR_MESSAGE);
                 return customDialogoNuevo(articulo);
             }
-            if (!precioStr.matches("[0-9]?[0-9]?(\\.[0-9][0-9]?)?")) {
+            if (!precioStr.matches("^[0-9]+(\\.[0-9]{1,2})?$")) {
                 JOptionPane.showMessageDialog(null, "Error: valor no valido introducido.", "Error", JOptionPane.ERROR_MESSAGE);
                 return customDialogoNuevo(articulo);
             }
@@ -269,28 +303,28 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         return false;
     }
 
-    private boolean validarCampos() {
-        String textoCampo1 = jTextFieldNumBarra.getText();
-        String textoCampo2 = jTextFieldCantidad.getText();
+    private boolean validarCamposAgregar() {
+        String numBarra = jTextFieldNumBarra.getText();
+        String cantidad = jTextFieldCantidad.getText();
 
-        if (textoCampo1.isEmpty() || textoCampo2.isEmpty()) {
+        if (numBarra.isEmpty() || cantidad.isEmpty()) {
             jLabelError.setText("Error: rellena los campos.");
             return false;
         }
-        if (!textoCampo1.matches("[0-9]+") || !textoCampo2.matches("[0-9]+")) {
+        if (!numBarra.matches("[0-9]+") || !cantidad.matches("[0-9]+")) {
             jLabelError.setText("Error: valor no valido introducido.");
             return false;
         }
-        if (textoCampo1.length() > 19) {    //19 porque en la BD BIGINT puede tener max. 19 dígitos.
+        if (numBarra.length() > 19) {    //19 porque en la BD BIGINT puede tener max. 19 dígitos.
             jLabelError.setText("Error: Valor no valido para Núm. Barra.");
             return false;
         }
-        if (textoCampo2.length() > 10) {
+        if (cantidad.length() > 10) {
             jLabelError.setText("Error: valor no valido para Cantidad.");
             return false;
         }
 
-        if (Integer.parseInt(textoCampo2) == 0) {
+        if (Integer.parseInt(cantidad) == 0) {
             jLabelError.setText("Error: no puede introducir 0 como cantidad.");
             return false;
         }
@@ -299,18 +333,24 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         return true;
     }
 
+    private boolean validarCamposVenta() {
+        String descuento = jTextFieldDescuento.getText();
+        String recibido = jTextFieldRecibido.getText();
+
+        if (descuento.isEmpty() || recibido.isEmpty()) {
+            jLabelErrorVenta.setText("Error: rellena los campos.");
+            return false;
+        }
+        if (!descuento.matches("^[0-9]+(\\.[0-9]{1,2})?$") || !recibido.matches("^[0-9]+(\\.[0-9]{1,2})?$")) {
+            jLabelErrorVenta.setText("Error: valor no valido introducido.");
+            return false;
+        }
+
+        jLabelErrorVenta.setText("");
+        return true;
+    }
+
     private void createNewTab() {
-        String[] columnNames = {"ID", "Nombre del artículo", "Precio Unitario", "Cantidad", "Precio"};
-
-        DefaultTableModel model = new DefaultTableModel(columnNames, 0);
-        model.setColumnIdentifiers(columnNames);
-        model.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                actualizarTotal(model);
-            }
-        });
-
         JTable tablaNuevoOrden = new TablaCustom(this);
         JScrollPane scrollPane = new JScrollPane(tablaNuevoOrden);
 
@@ -374,13 +414,17 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         return false; // No se pudo agregar el artículo
     }
 
-    public void actualizarTotal(DefaultTableModel model) {
-        BigDecimal total = new BigDecimal(0);
-        for (int fila = 0; fila < model.getRowCount(); fila++) {
-            BigDecimal precio = (BigDecimal) model.getValueAt(fila, 4);
-            total = total.add(precio);
-        }
+    public void setTotal(BigDecimal total) {
         jLabelTotal_num.setText(total.setScale(2, RoundingMode.HALF_EVEN) + "€");
+        if (total.compareTo(BigDecimal.ZERO) == 0) {
+            jButtonRecibir.setEnabled(false);
+        } else {
+            jButtonRecibir.setEnabled(true);
+        }
+    }
+
+    public void setIdVenta(String id) {
+        jLabelIdVenta_num.setText(id);
     }
 
     /**
@@ -403,6 +447,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jTextFieldCantidad = new javax.swing.JTextField();
         jLabelCantidad = new javax.swing.JLabel();
         jLabelError = new javax.swing.JLabel();
+        jLabelIdVenta_num = new javax.swing.JLabel();
         jPanelVenta = new javax.swing.JPanel();
         jLabelTotal = new javax.swing.JLabel();
         jLabelRecibido = new javax.swing.JLabel();
@@ -410,7 +455,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jLabelDescuento = new javax.swing.JLabel();
         jTextFieldRecibido = new javax.swing.JTextField();
         jButtonConfirmarVenta = new javax.swing.JButton();
-        jLabelSistema = new javax.swing.JLabel();
+        jLabelErrorVenta = new javax.swing.JLabel();
         jButtonRecibir = new javax.swing.JButton();
         jButtonMostrarRecibo = new javax.swing.JButton();
         jTextFieldDescuento = new javax.swing.JTextField();
@@ -468,12 +513,16 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jLabelError.setForeground(new java.awt.Color(255, 0, 0));
 
+        jLabelIdVenta_num.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
+        jLabelIdVenta_num.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+
         javax.swing.GroupLayout jPanelIntroducirLayout = new javax.swing.GroupLayout(jPanelIntroducir);
         jPanelIntroducir.setLayout(jPanelIntroducirLayout);
         jPanelIntroducirLayout.setHorizontalGroup(
             jPanelIntroducirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanelIntroducirLayout.createSequentialGroup()
                 .addGroup(jPanelIntroducirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jLabelIdVenta_num, javax.swing.GroupLayout.PREFERRED_SIZE, 314, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabelError, javax.swing.GroupLayout.PREFERRED_SIZE, 374, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanelIntroducirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                         .addGroup(jPanelIntroducirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -498,7 +547,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             jPanelIntroducirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelIntroducirLayout.createSequentialGroup()
                 .addContainerGap(15, Short.MAX_VALUE)
-                .addComponent(jLabelIdVenta)
+                .addGroup(jPanelIntroducirLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabelIdVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelIdVenta_num, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jLabelNumBarra)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -542,14 +593,18 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jButtonConfirmarVenta.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonConfirmarVenta.setText("Confirmar venta");
+        jButtonConfirmarVenta.setEnabled(false);
         jButtonConfirmarVenta.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonConfirmarVentaActionPerformed(evt);
             }
         });
 
+        jLabelErrorVenta.setForeground(new java.awt.Color(255, 0, 0));
+
         jButtonRecibir.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
         jButtonRecibir.setText("Recibir pago");
+        jButtonRecibir.setEnabled(false);
         jButtonRecibir.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButtonRecibirActionPerformed(evt);
@@ -592,7 +647,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             .addGroup(jPanelVentaLayout.createSequentialGroup()
                 .addGap(23, 23, 23)
                 .addGroup(jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabelSistema, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jLabelErrorVenta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(jPanelVentaLayout.createSequentialGroup()
                         .addGroup(jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -652,7 +707,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                             .addComponent(jLabelDevolver)
                             .addComponent(jLabelDevolver_num))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jLabelSistema, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addComponent(jLabelErrorVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 22, javax.swing.GroupLayout.PREFERRED_SIZE)))
                 .addGap(24, 24, 24))
         );
 
@@ -702,7 +757,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
         jTabbedPane.addTab("", null);
         jTabbedPane.setTabComponentAt(0, botonNewTab);
-        createNewTab();
 
         jScrollPane1.setViewportView(jTabbedPane);
 
@@ -768,7 +822,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButtonAgregarArticuloActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonAgregarArticuloActionPerformed
-        if (validarCampos()) {
+        if (validarCamposAgregar()) {
             addArticulo(new Articulo(new BigInteger(jTextFieldNumBarra.getText()), "", new BigDecimal(0)), Integer.parseInt(jTextFieldCantidad.getText()));
         }
         jTextFieldNumBarra.requestFocus();
@@ -809,16 +863,65 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonMostrarReciboActionPerformed
 
     private void jButtonRecibirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRecibirActionPerformed
-        // TODO add your handling code here:
+        if (!validarCamposVenta()) {
+            jTextFieldDescuento.requestFocus();
+            return;
+        }
+        BigDecimal total = new BigDecimal(jLabelTotal_num.getText().replace("€", ""));
+        BigDecimal descuento = new BigDecimal(jTextFieldDescuento.getText());
+        BigDecimal recibido = new BigDecimal(jTextFieldRecibido.getText());
+
+        BigDecimal devolver = (total.subtract(descuento)).subtract(recibido);
+        if (recibido.compareTo(total) < 0) {
+            jLabelErrorVenta.setText("Atención: la cantidad recibida es inferior al total.");
+        } else {
+            jLabelDevolver_num.setText(devolver.toString() + "€");
+            jButtonConfirmarVenta.setEnabled(true);
+            jButtonConfirmarVenta.requestFocus();
+        }
     }//GEN-LAST:event_jButtonRecibirActionPerformed
 
     private void jButtonConfirmarVentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonConfirmarVentaActionPerformed
-        // TODO add your handling code here:
+        // IMPLEMENTAR CREACIÓN DE VENTAS
+        int index = jTabbedPane.getSelectedIndex();
+        if (index == jTabbedPane.getTabCount() - 1) {
+            return;
+        }
+
+        JScrollPane selectedComponent = (JScrollPane) jTabbedPane.getComponentAt(index);
+        TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
+
+        Map<BigInteger, Integer> ids = table.listarID();
+        Venta venta = new Venta(new BigInteger(table.getID_VENTA()), LocalDateTime.now());
+
+        if (GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_venta, venta)) {
+            for (Map.Entry<BigInteger, Integer> entry : ids.entrySet()) {
+                if (!GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_relacion, venta.getID(), entry.getKey(), entry.getValue())) {
+                    //MENSAJE FALLADO, BORRAR TODAS LAS RELACIONES Y LA VENTA
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "Error: no se ha podido guardar la venta.\nBorrando las relaciones y cancelando acción.",
+                            "Error",
+                            JOptionPane.ERROR_MESSAGE);
+                    ids.forEach((keyX, valueX) -> {
+                        GestorBDD.ejecutarCRUD(conn, SQL.sql_borrar_relacion, venta.getID(), keyX, 0);
+                    });
+                    GestorBDD.ejecutarCRUD(conn, SQL.sql_borrar_venta, venta);
+                    return;
+                }
+            }
+        }
+        JOptionPane.showMessageDialog(
+                null,
+                "Se ha guardado la venta.",
+                "Exito",
+                JOptionPane.INFORMATION_MESSAGE);
+        cerrarCurrentTab();
     }//GEN-LAST:event_jButtonConfirmarVentaActionPerformed
 
     /**
-     * @param args the command line arguments
-     */
+         * @param args the command line arguments
+         */
     public static void main(String args[]) {
 
         try {
@@ -882,10 +985,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelDevolver;
     private javax.swing.JLabel jLabelDevolver_num;
     private javax.swing.JLabel jLabelError;
+    private javax.swing.JLabel jLabelErrorVenta;
     private javax.swing.JLabel jLabelIdVenta;
+    private javax.swing.JLabel jLabelIdVenta_num;
     private javax.swing.JLabel jLabelNumBarra;
     private javax.swing.JLabel jLabelRecibido;
-    private javax.swing.JLabel jLabelSistema;
     private javax.swing.JLabel jLabelTotal;
     private javax.swing.JLabel jLabelTotal_num;
     private javax.swing.JMenu jMenuArticulos;

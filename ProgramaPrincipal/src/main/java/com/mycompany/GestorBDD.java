@@ -16,6 +16,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Timestamp;
 
 /**
  *
@@ -86,9 +87,13 @@ public class GestorBDD {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, articulo.getNombre());
-            pstmt.setBigDecimal(2, articulo.getPrecio());
-            pstmt.setString(3, articulo.getID().toString());
+            if (sql.startsWith("DELETE")) {
+                pstmt.setString(1, articulo.getID().toString());
+            } else {
+                pstmt.setString(1, articulo.getNombre());
+                pstmt.setBigDecimal(2, articulo.getPrecio());
+                pstmt.setString(3, articulo.getID().toString());
+            }
             filasAfectadas = pstmt.executeUpdate();
         } catch (SQLException e) {
             mostrarExcepcion(e);
@@ -100,8 +105,12 @@ public class GestorBDD {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setDate(1, venta.getFecha());
-            pstmt.setInt(2, venta.getID());
+            if (sql.startsWith("DELETE")) {
+                pstmt.setString(1, venta.getID().toString());
+            } else {
+                pstmt.setTimestamp(1, Timestamp.valueOf(venta.getFecha()));
+                pstmt.setString(2, venta.getID().toString());
+            }
             filasAfectadas = pstmt.executeUpdate();
         } catch (SQLException e) {
             mostrarExcepcion(e);
@@ -110,13 +119,18 @@ public class GestorBDD {
         return filasAfectadas > 0;
     }
 
-    public static boolean ejecutarCRUD(Connection conn, String sql, int id_venta, int id_articulo, int cantidad) {
+    public static boolean ejecutarCRUD(Connection conn, String sql, BigInteger id_venta, BigInteger id_articulo, int cantidad) {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
-            pstmt.setInt(1, cantidad);
-            pstmt.setInt(2, id_venta);
-            pstmt.setInt(3, id_articulo);
+            if (sql.startsWith("DELETE")) {
+                pstmt.setString(1, id_venta.toString());
+                pstmt.setString(2, id_articulo.toString());
+            } else {
+                pstmt.setInt(1, cantidad);
+                pstmt.setString(2, id_venta.toString());
+                pstmt.setString(3, id_articulo.toString());
+            }
             filasAfectadas = pstmt.executeUpdate();
         } catch (SQLException e) {
             mostrarExcepcion(e);
@@ -150,7 +164,7 @@ public class GestorBDD {
             if (rs.next()) {
                 Articulo articulo = new Articulo(
                         BigInteger.valueOf(rs.getLong("id")),
-                        rs.getString(SQL.ARTICULOS_NOMBRE), 
+                        rs.getString(SQL.ARTICULOS_NOMBRE),
                         rs.getBigDecimal(SQL.ARTICULOS_PRECIO)
                 );
                 rs.close();

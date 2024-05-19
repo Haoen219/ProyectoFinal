@@ -34,7 +34,7 @@ public class GestorClientes extends Thread {
         } catch (IOException e) {
             JOptionPane.showMessageDialog(
                     null, 
-                    "No se ha podido establecer la conexión del\nGestor de Clientes.\nCompruebe que el programa no se esté ejecutando de forma repetida.",
+                    "No se ha podido establecer la conexión del Gestor de Clientes.\nCompruebe que el programa no se esté ejecutando de forma repetida.",
                     "Error al establecer Servidor", 
                     JOptionPane.ERROR_MESSAGE
             );
