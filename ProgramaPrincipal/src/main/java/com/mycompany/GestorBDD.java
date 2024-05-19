@@ -6,8 +6,8 @@ package com.mycompany;
 
 import static com.mycompany.clases.Funciones.mostrarExcepcion;
 import com.mycompany.SQL.SQL;
-import com.mycompany.SQL.Articulo;
-import com.mycompany.SQL.Venta;
+import com.mycompany.modelos.Articulo;
+import com.mycompany.modelos.Venta;
 import java.math.BigInteger;
 
 import java.sql.Connection;

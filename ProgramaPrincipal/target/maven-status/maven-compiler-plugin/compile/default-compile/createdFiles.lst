@@ -1,7 +1,6 @@
 com\mycompany\PantallaPrincipal$15.class
 com\mycompany\PantallaPrincipal$1.class
 com\mycompany\PantallaPrincipal$6.class
-com\mycompany\SQL\Venta.class
 com\mycompany\PantallaPrincipal$13.class
 com\mycompany\TablaCustom$2$1.class
 com\mycompany\clases\VentanaArticulos.class
@@ -9,6 +8,7 @@ com\mycompany\PantallaPrincipal.class
 com\mycompany\clases\DialogoConexion.class
 com\mycompany\clases\VentanaVentas$1.class
 com\mycompany\PantallaPrincipal$11.class
+com\mycompany\modelos\Ticket.class
 com\mycompany\TablaCustom$1.class
 com\mycompany\PantallaPrincipal$14.class
 com\mycompany\PantallaPrincipal$8.class
@@ -16,7 +16,9 @@ com\mycompany\clases\SplashScreen.class
 com\mycompany\PantallaPrincipal$3.class
 com\mycompany\clases\DialogoConexion$1.class
 com\mycompany\PantallaPrincipal$7.class
+com\mycompany\modelos\Venta.class
 com\mycompany\clases\Funciones.class
+com\mycompany\modelos\Articulo.class
 com\mycompany\TablaCustom.class
 com\mycompany\clases\VentanaArticulos$1.class
 com\mycompany\PantallaPrincipal$2.class
@@ -26,7 +28,6 @@ com\mycompany\TablaCustom$3.class
 com\mycompany\clases\DialogoError.class
 com\mycompany\TablaCustom$2$2.class
 com\mycompany\PantallaPrincipal$5.class
-com\mycompany\SQL\Articulo.class
 com\mycompany\PantallaPrincipal$12.class
 com\mycompany\SQL\SQL.class
 com\mycompany\TablaCustom$2.class

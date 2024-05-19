@@ -3,7 +3,7 @@ package com.mycompany;
 import com.mycompany.clases.SplashScreen;
 import com.mycompany.clases.DialogoConexion;
 import com.mycompany.SQL.SQL;
-import com.mycompany.SQL.Articulo;
+import com.mycompany.modelos.Articulo;
 import java.awt.Dimension;
 import java.awt.GridLayout;
 import java.awt.KeyboardFocusManager;
@@ -33,11 +33,18 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import com.formdev.flatlaf.FlatLightLaf;
-import com.mycompany.SQL.Venta;
+import com.mycompany.clases.Funciones;
+import com.mycompany.modelos.Ticket;
+import com.mycompany.modelos.Venta;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import javax.print.PrintService;
+import javax.print.PrintServiceLookup;
+import javax.print.attribute.standard.PrinterName;
 import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
@@ -47,7 +54,7 @@ class TablaCustom extends javax.swing.JTable {
 
     private final String ID_VENTA;
     private PantallaPrincipal parent;
-    private String[] columnNames = {"ID", "Nombre del artículo", "Precio Unitario", "Cantidad", "Precio"};
+    private String[] columnNames = {"ID", "Nombre del artículo", "Precio Unitario", "Cantidad", "Subtotal"};
     private DefaultTableModel model;
 
     public String getID_VENTA() {
@@ -132,17 +139,20 @@ class TablaCustom extends javax.swing.JTable {
         return total;
     }
 
-    public Map<BigInteger, Integer> listarID() {
-        Map<BigInteger, Integer> ids = new HashMap<>() {
+    public Map<Articulo, Integer> listarID() {
+        Map<Articulo, Integer> articulos = new HashMap<>() {
         };
 
         for (int i = 0; i < model.getRowCount(); i++) {
             BigInteger id = (BigInteger) model.getValueAt(i, 0);
+            String nombre = (String) model.getValueAt(i, 1);
+            BigDecimal precio = (BigDecimal) model.getValueAt(i, 2);
             int cantidad = (int) model.getValueAt(i, 3);
-            ids.put(id, cantidad);
+
+            articulos.put(new Articulo(id, nombre, precio), cantidad);
         }
 
-        return ids;
+        return articulos;
     }
 }
 
@@ -196,8 +206,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                     setTotal(BigDecimal.ZERO);
                     setIdVenta("");
                 }
-                jTextFieldDescuento.setText("");
-                jTextFieldRecibido.setText("");
+                jTextFieldDescuento.setText("0");
+                jTextFieldRecibido.setText("0");
                 jLabelDevolver_num.setText("0.0€");
                 jButtonConfirmarVenta.setEnabled(false);
             }
@@ -427,6 +437,46 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jLabelIdVenta_num.setText(id);
     }
 
+    public void generarTicket(Ticket ticket) {
+        PrinterJob job = PrinterJob.getPrinterJob();
+        job.setPrintable(ticket);
+
+        try {
+            // Obtener todas las impresoras disponibles en el sistema
+            PrintService[] printServices = PrinterJob.lookupPrintServices();
+
+            if (printServices != null && printServices.length > 0) {
+//                System.out.println("Impresoras disponibles:");
+//                for (PrintService printService : printServices) {
+//                    String nombreImpresora = printService.getAttribute(PrinterName.class).getValue();
+//                    System.out.println(nombreImpresora);
+//                }
+
+                // Obtener el servicio de impresión predeterminado
+                PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
+
+                if (defaultPrintService != null) {
+                    job.setPrintService(defaultPrintService);
+                    job.print();  // Imprimir directamente sin mostrar el diálogo
+                } else {
+                    JOptionPane.showMessageDialog(
+                            null,
+                            "No hay impresora predeterminada disponible.",
+                            "Atención",
+                            JOptionPane.INFORMATION_MESSAGE);
+                }
+            } else {
+                JOptionPane.showMessageDialog(
+                        null,
+                        "No hay impresoras disponibles.",
+                        "Atención",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        } catch (PrinterException e) {
+            Funciones.mostrarExcepcion(e);
+        }
+    }
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -628,6 +678,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 jTextFieldRecibido.requestFocusInWindow();
             }
         });
+        jTextFieldDescuento.setText("0");
         jTextFieldDescuento.setToolTipText("Cantidad restada a Total");
 
         jLabelTotal_num.setFont(new java.awt.Font("Segoe UI", 0, 20)); // NOI18N
@@ -872,7 +923,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         BigDecimal recibido = new BigDecimal(jTextFieldRecibido.getText());
 
         BigDecimal devolver = (total.subtract(descuento)).subtract(recibido);
-        if (recibido.compareTo(total) < 0) {
+        if (recibido.compareTo(total.subtract(descuento)) < 0) {
             jLabelErrorVenta.setText("Atención: la cantidad recibida es inferior al total.");
         } else {
             jLabelDevolver_num.setText(devolver.toString() + "€");
@@ -891,37 +942,33 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         JScrollPane selectedComponent = (JScrollPane) jTabbedPane.getComponentAt(index);
         TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
 
-        Map<BigInteger, Integer> ids = table.listarID();
+        Map<Articulo, Integer> articulos = table.listarID();
         Venta venta = new Venta(new BigInteger(table.getID_VENTA()), LocalDateTime.now());
 
         if (GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_venta, venta)) {
-            for (Map.Entry<BigInteger, Integer> entry : ids.entrySet()) {
-                if (!GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_relacion, venta.getID(), entry.getKey(), entry.getValue())) {
+            for (Map.Entry<Articulo, Integer> entry : articulos.entrySet()) {
+                if (!GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_relacion, venta.getID(), entry.getKey().getID(), entry.getValue())) {
                     //MENSAJE FALLADO, BORRAR TODAS LAS RELACIONES Y LA VENTA
                     JOptionPane.showMessageDialog(
                             null,
                             "Error: no se ha podido guardar la venta.\nBorrando las relaciones y cancelando acción.",
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
-                    ids.forEach((keyX, valueX) -> {
-                        GestorBDD.ejecutarCRUD(conn, SQL.sql_borrar_relacion, venta.getID(), keyX, 0);
+                    articulos.forEach((articulo, cantidad) -> {
+                        GestorBDD.ejecutarCRUD(conn, SQL.sql_borrar_relacion, venta.getID(), articulo.getID(), 0);
                     });
                     GestorBDD.ejecutarCRUD(conn, SQL.sql_borrar_venta, venta);
                     return;
                 }
             }
         }
-        JOptionPane.showMessageDialog(
-                null,
-                "Se ha guardado la venta.",
-                "Exito",
-                JOptionPane.INFORMATION_MESSAGE);
+        generarTicket(new Ticket(articulos, venta, new BigDecimal(jTextFieldDescuento.getText()), new BigDecimal(jTextFieldRecibido.getText())));
         cerrarCurrentTab();
     }//GEN-LAST:event_jButtonConfirmarVentaActionPerformed
 
     /**
-         * @param args the command line arguments
-         */
+     * @param args the command line arguments
+     */
     public static void main(String args[]) {
 
         try {

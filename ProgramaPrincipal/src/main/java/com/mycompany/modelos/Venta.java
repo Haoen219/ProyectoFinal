@@ -1,4 +1,4 @@
-package com.mycompany.SQL;
+package com.mycompany.modelos;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
