@@ -9,14 +9,14 @@ package com.mycompany.SQL;
  * @author haoen
  */
 public class SQL {
-    
+
     public static final String NOMBRE_ARTICULOS = "articulos";
     public static final String ARTICULOS_NOMBRE = "nombre";
     public static final String ARTICULOS_PRECIO = "precio";
-    
+
     public static final String NOMBRE_VENTAS = "ventas";
     public static final String VENTAS_FECHA = "fecha";
-    
+
     public static final String NOMBRE_VENTA_ARTICULO = "venta_articulo";
     public static final String RELACION_VENTA_ID = "venta_id";
     public static final String RELACION_ARTICULO_ID = "articulo_id";
@@ -33,7 +33,7 @@ public class SQL {
     public static String sql_tabla_venta
             = "CREATE TABLE IF NOT EXISTS " + NOMBRE_VENTAS + " (\n"
             + "    id BIGINT PRIMARY KEY,\n"
-            + "   " + VENTAS_FECHA + " DATETIME\n"
+            + "   " + VENTAS_FECHA + " DATE\n"
             + ");";
 
     public static String sql_tabla_venta_articulo
@@ -63,4 +63,30 @@ public class SQL {
     public static String sql_insertar_relacion = "INSERT INTO " + NOMBRE_VENTA_ARTICULO + "(" + RELACION_CANTIDAD + "," + RELACION_VENTA_ID + "," + RELACION_ARTICULO_ID + ") VALUES(?,?,?)";
     public static String sql_modificar_relacion = "UPDATE " + NOMBRE_VENTA_ARTICULO + " SET " + RELACION_CANTIDAD + " = ? , WHERE " + RELACION_VENTA_ID + " = ? AND " + RELACION_ARTICULO_ID + " = ?";
     public static String sql_borrar_relacion = "DELETE FROM " + NOMBRE_VENTA_ARTICULO + " WHERE " + RELACION_VENTA_ID + " = ? AND " + RELACION_ARTICULO_ID + " = ?";
+    public static String sql_borrar_relacion_venta = "DELETE FROM " + NOMBRE_VENTA_ARTICULO + " WHERE " + RELACION_VENTA_ID + " = ?";
+    public static String sql_borrar_relacion_articulo = "DELETE FROM " + NOMBRE_VENTA_ARTICULO + " WHERE " + RELACION_VENTA_ID + " = ?";
+
+    public static String sql_leer_ventas_tabla
+            = "SELECT " + NOMBRE_VENTAS + ".id AS id,"
+            + NOMBRE_VENTAS + "." + VENTAS_FECHA + " AS Fecha,"
+            + NOMBRE_ARTICULOS + "." + ARTICULOS_NOMBRE + " AS Articulo,"
+            + NOMBRE_VENTA_ARTICULO + "." + RELACION_CANTIDAD + " AS Cantidad,"
+            + NOMBRE_ARTICULOS + "." + ARTICULOS_PRECIO + " AS 'Precio unitario',"
+            + NOMBRE_VENTA_ARTICULO + "." + RELACION_CANTIDAD + " * " + NOMBRE_ARTICULOS + ".precio AS Total"
+            + " FROM " + NOMBRE_VENTAS + " JOIN " + NOMBRE_VENTA_ARTICULO + " ON " + NOMBRE_VENTAS + ".id = " + NOMBRE_VENTA_ARTICULO + "." + RELACION_VENTA_ID
+            + " JOIN " + NOMBRE_ARTICULOS + " ON " + NOMBRE_VENTA_ARTICULO + "." + RELACION_ARTICULO_ID + " = " + NOMBRE_ARTICULOS + ".id";
+    public static String sql_leer_ventas_tabla_filtro
+            = "SELECT " + NOMBRE_VENTAS + ".id AS id, "
+            + NOMBRE_VENTAS + "." + VENTAS_FECHA + " AS Fecha, "
+            + NOMBRE_ARTICULOS + "." + ARTICULOS_NOMBRE + " AS Articulo, "
+            + NOMBRE_VENTA_ARTICULO + "." + RELACION_CANTIDAD + " AS Cantidad, "
+            + NOMBRE_ARTICULOS + "." + ARTICULOS_PRECIO + " AS 'Precio unitario', "
+            + NOMBRE_VENTA_ARTICULO + "." + RELACION_CANTIDAD + " * " + NOMBRE_ARTICULOS + ".precio AS Total"
+            + " FROM " + NOMBRE_VENTAS + " JOIN " + NOMBRE_VENTA_ARTICULO + " ON " + NOMBRE_VENTAS + ".id = " + NOMBRE_VENTA_ARTICULO + "." + RELACION_VENTA_ID
+            + " JOIN " + NOMBRE_ARTICULOS + " ON " + NOMBRE_VENTA_ARTICULO + "." + RELACION_ARTICULO_ID + " = " + NOMBRE_ARTICULOS + ".id"
+            + " WHERE LOWER(" + NOMBRE_VENTAS + ".id) LIKE ? OR LOWER(" + NOMBRE_VENTAS + "." + VENTAS_FECHA + ") LIKE ? OR LOWER(" + NOMBRE_ARTICULOS + "." + ARTICULOS_NOMBRE + ") LIKE ?";
+
+    public static String sql_leer_articulos_filtro
+            = "SELECT * FROM " + NOMBRE_ARTICULOS
+            + " WHERE LOWER(id) LIKE ? OR LOWER(" + ARTICULOS_NOMBRE + ") LIKE ?";
 }

@@ -83,12 +83,15 @@ public class GestorBDD {
         return respuestas;
     }
 
-    public static boolean ejecutarCRUD(Connection conn, String sql, Articulo articulo) {
+    public static boolean articuloEjecutarCRUD(Connection conn, String sql, Articulo articulo) {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             if (sql.startsWith("DELETE")) {
                 pstmt.setString(1, articulo.getID().toString());
+            } else if (sql.startsWith("BEGIN;")) {
+                pstmt.setString(1, articulo.getID().toString());
+                pstmt.setString(2, articulo.getID().toString());
             } else {
                 pstmt.setString(1, articulo.getNombre());
                 pstmt.setBigDecimal(2, articulo.getPrecio());
@@ -101,12 +104,15 @@ public class GestorBDD {
         return filasAfectadas > 0;
     }
 
-    public static boolean ejecutarCRUD(Connection conn, String sql, Venta venta) {
+    public static boolean ventaEjecutarCRUD(Connection conn, String sql, Venta venta) {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             if (sql.startsWith("DELETE")) {
                 pstmt.setString(1, venta.getID().toString());
+            } else if (sql.startsWith("BEGIN;")) {
+                pstmt.setString(1, venta.getID().toString());
+                pstmt.setString(2, venta.getID().toString());
             } else {
                 pstmt.setTimestamp(1, Timestamp.valueOf(venta.getFecha()));
                 pstmt.setString(2, venta.getID().toString());
@@ -119,13 +125,23 @@ public class GestorBDD {
         return filasAfectadas > 0;
     }
 
-    public static boolean ejecutarCRUD(Connection conn, String sql, BigInteger id_venta, BigInteger id_articulo, int cantidad) {
+    // Se ha complicado el uso de esto :(
+    public static boolean relacionEjecutarCRUD(Connection conn, String sql, BigInteger id_venta, BigInteger id_articulo, int cantidad) {
         int filasAfectadas = 0;
         try {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             if (sql.startsWith("DELETE")) {
-                pstmt.setString(1, id_venta.toString());
-                pstmt.setString(2, id_articulo.toString());
+                int parameterCount = pstmt.getParameterMetaData().getParameterCount();
+                if (parameterCount == 1) {
+                    if (sql.contains(SQL.NOMBRE_VENTA_ARTICULO)) {              //Si se usa el SQL.sql_borrar_relacion_venta o SQL.sql_borrar_relacion_articulo
+                        pstmt.setString(1, id_venta.toString());
+                    } else {
+                        pstmt.setString(1, id_articulo.toString());
+                    }
+                } else if (parameterCount == 2) {
+                    pstmt.setString(1, id_venta.toString());
+                    pstmt.setString(2, id_articulo.toString());
+                }
             } else {
                 pstmt.setInt(1, cantidad);
                 pstmt.setString(2, id_venta.toString());
@@ -144,11 +160,37 @@ public class GestorBDD {
             Statement stmt = conn.createStatement();
             ResultSet rs = stmt.executeQuery(sql);
             return rs;
+        } catch (SQLException e) {
+            mostrarExcepcion(e);
+        }
+        return null;
+    }
 
-//            ArrayList<Articulo> articulos = new ArrayList<>();
-//            while (rs.next()) {
-//                articulos.add(new Articulo(rs.getInt("id"), rs.getString("nombre"), rs.getBigDecimal("precio")));
-//            }
+    public static ResultSet recuperarArticulosFiltrado(Connection conn, String valor) {
+        valor = "%" + valor.toLowerCase() + "%";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(SQL.sql_leer_articulos_filtro);
+            pstmt.setString(1, valor);
+            pstmt.setString(2, valor);
+            ResultSet rs = pstmt.executeQuery();
+            return rs;
+        } catch (SQLException e) {
+            mostrarExcepcion(e);
+        }
+        return null;
+    }
+
+    public static ResultSet recuperarVentasFiltrado(Connection conn, String valor) {
+        valor = "%" + valor.toLowerCase() + "%";
+
+        try {
+            PreparedStatement pstmt = conn.prepareStatement(SQL.sql_leer_ventas_tabla_filtro);
+            pstmt.setString(1, valor);
+            pstmt.setString(2, valor);
+            pstmt.setString(3, valor);
+            ResultSet rs = pstmt.executeQuery();
+            return rs;
         } catch (SQLException e) {
             mostrarExcepcion(e);
         }
@@ -210,7 +252,7 @@ public class GestorBDD {
 //        }
 //        System.out.println("---");
 //        //CREAR
-//        ejecutarCRUD(conn, SQL.sql_insertar_articulo, articulo_test);
+//        articuloEjecutarCRUD(conn, SQL.sql_insertar_articulo, articulo_test);
 //        
 //        lista_articulos = recuperarArticulos(conn);
 //        System.out.println("segundo Print");
@@ -221,7 +263,7 @@ public class GestorBDD {
 //        //MODIFICAR
 //        articulo_test.setNombre("Hamogus");
 //        articulo_test.setPrecio(BigDecimal.valueOf(12.00));
-//        ejecutarCRUD(conn, SQL.sql_modificar_articulo, articulo_test);
+//        articuloEjecutarCRUD(conn, SQL.sql_modificar_articulo, articulo_test);
 //        
 //        lista_articulos = recuperarArticulos(conn);
 //        System.out.println("tercer Print");
@@ -230,7 +272,7 @@ public class GestorBDD {
 //        }
 //        System.out.println("---");
 //        //BORRAR
-//        ejecutarCRUD(conn, SQL.sql_borrar_articulo, articulo_test);
+//        articuloEjecutarCRUD(conn, SQL.sql_borrar_articulo, articulo_test);
 //        
 //        lista_articulos = recuperarArticulos(conn);
 //        System.out.println("tercer Print");

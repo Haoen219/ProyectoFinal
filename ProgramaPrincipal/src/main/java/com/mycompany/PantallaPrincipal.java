@@ -1,7 +1,6 @@
 package com.mycompany;
 
 import com.mycompany.clases.SplashScreen;
-import com.mycompany.clases.DialogoConexion;
 import com.mycompany.SQL.SQL;
 import com.mycompany.modelos.Articulo;
 import java.awt.Dimension;
@@ -10,13 +9,10 @@ import java.awt.KeyboardFocusManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.sql.Connection;
-import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
@@ -29,132 +25,28 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
-import javax.swing.event.TableModelEvent;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import com.formdev.flatlaf.FlatLightLaf;
 import com.mycompany.clases.Funciones;
+import com.mycompany.clases.TablaCustom;
+import com.mycompany.clases.VentanaArticulos;
+import com.mycompany.clases.VentanaVentas;
 import com.mycompany.modelos.Ticket;
 import com.mycompany.modelos.Venta;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.net.UnknownHostException;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.HashMap;
 import java.util.Map;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
-import javax.print.attribute.standard.PrinterName;
-import javax.swing.SwingConstants;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.DefaultTableCellRenderer;
-
-class TablaCustom extends javax.swing.JTable {
-
-    private final String ID_VENTA;
-    private PantallaPrincipal parent;
-    private String[] columnNames = {"ID", "Nombre del artículo", "Precio Unitario", "Cantidad", "Subtotal"};
-    private DefaultTableModel model;
-
-    public String getID_VENTA() {
-        return this.ID_VENTA;
-    }
-
-    public TablaCustom(PantallaPrincipal parent) {
-        LocalDateTime now = LocalDateTime.now();
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmssSSS");
-        ID_VENTA = now.format(formatter);
-
-        this.parent = parent;
-
-        // Crear y configurar modelo
-        model = new DefaultTableModel(columnNames, 0);
-        model.setColumnIdentifiers(columnNames);
-        model.addTableModelListener(new TableModelListener() {
-            @Override
-            public void tableChanged(TableModelEvent e) {
-                parent.setTotal(calcularTotal());
-            }
-        });
-        this.setModel(model);
-
-        // Crear un DefaultTableCellRenderer para centrar el texto
-        DefaultTableCellRenderer centerRenderer = new DefaultTableCellRenderer();
-        centerRenderer.setHorizontalAlignment(SwingConstants.CENTER);
-        for (int i = 0; i < this.getColumnCount(); i++) {
-            this.getColumnModel().getColumn(i).setCellRenderer(centerRenderer);
-        }
-
-        // Añadir un MouseListener para manejar clics con el botón derecho del ratón
-        this.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                int r = rowAtPoint(e.getPoint());
-                if (r >= 0 && r < getRowCount()) {
-                    setRowSelectionInterval(r, r);
-                } else {
-                    clearSelection();
-                }
-
-                int rowindex = getSelectedRow();
-                if (rowindex < 0) {
-                    return;
-                }
-                if (e.isPopupTrigger() && e.getComponent() instanceof JTable) {
-                    JPopupMenu popupMenu = new JPopupMenu();
-                    JMenuItem editar = new JMenuItem("Editar Cantidad");
-                    JMenuItem borrar = new JMenuItem("Borrar de la lista");
-
-                    editar.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            parent.setTotal(calcularTotal());
-                            parent.setIdVenta(getID_VENTA());
-                        }
-                    });
-                    borrar.addActionListener(new ActionListener() {
-                        @Override
-                        public void actionPerformed(ActionEvent e) {
-                            model.removeRow(rowindex);
-                        }
-                    });
-
-                    popupMenu.add(editar);
-                    popupMenu.add(borrar);
-                    popupMenu.show(e.getComponent(), e.getX(), e.getY());
-                    setRowSelectionInterval(r, r);
-                }
-            }
-        });
-    }
-
-    public BigDecimal calcularTotal() {
-        BigDecimal total = new BigDecimal(0);
-
-        for (int i = 0; i < model.getRowCount(); i++) {
-            total = total.add((BigDecimal) model.getValueAt(i, 4));
-        }
-
-        return total;
-    }
-
-    public Map<Articulo, Integer> listarID() {
-        Map<Articulo, Integer> articulos = new HashMap<>() {
-        };
-
-        for (int i = 0; i < model.getRowCount(); i++) {
-            BigInteger id = (BigInteger) model.getValueAt(i, 0);
-            String nombre = (String) model.getValueAt(i, 1);
-            BigDecimal precio = (BigDecimal) model.getValueAt(i, 2);
-            int cantidad = (int) model.getValueAt(i, 3);
-
-            articulos.put(new Articulo(id, nombre, precio), cantidad);
-        }
-
-        return articulos;
-    }
-}
+import javax.swing.table.TableModel;
+import org.openide.util.Exceptions;
 
 /**
  *
@@ -229,62 +121,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         }
     }
 
-    public boolean customDialogEditar(JTable tabla) {
-        JPanel panel = new JPanel();
-        JTextField textField = new JTextField(10);
-        JLabel label = new JLabel("Ingrese la cantidad: ");
-        panel.add(label);
-        panel.add(textField);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-
-        int option = showConfirmDialog(null, panel, "Modificar cantidad", JOptionPane.OK_CANCEL_OPTION);
-
-        if (option == JOptionPane.OK_OPTION) {
-            String textoCampo = textField.getText();
-
-            if (textoCampo.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Error: rellena los campos.", "Error", JOptionPane.ERROR_MESSAGE);
-                return customDialogEditar(tabla);
-            }
-            if (!textoCampo.matches("[0-9]+")) {
-                JOptionPane.showMessageDialog(null, "Error: valor no valido introducido.", "Error", JOptionPane.ERROR_MESSAGE);
-                return customDialogEditar(tabla);
-            }
-            if (textoCampo.length() > 10) {
-                JOptionPane.showMessageDialog(null, "Error: Valor no valido\npara Núm. Barra.", "Error", JOptionPane.ERROR_MESSAGE);
-                return customDialogEditar(tabla);
-            }
-
-            if (Integer.parseInt(textoCampo) == 0) {
-                JOptionPane.showMessageDialog(null, "Error: No puede introducir\n0 como cantidad.", "Error", JOptionPane.ERROR_MESSAGE);
-                return customDialogEditar(tabla);
-            }
-
-            int index = tabla.getSelectedRow();
-            DefaultTableModel model = (DefaultTableModel) tabla.getModel();
-            model.setValueAt(textField.getText(), index, 3);
-            BigDecimal precio = new BigDecimal(((Number) model.getValueAt(index, 2)).doubleValue());
-            BigDecimal precioTotal = precio.multiply(BigDecimal.valueOf(Integer.parseInt(textField.getText()))).setScale(2, RoundingMode.HALF_EVEN);
-            model.setValueAt(precioTotal, index, 4);
-            return true;
-        }
-        return false;
-    }
-
     public boolean customDialogoNuevo(Articulo articulo) {
         JPanel panel = new JPanel(new GridLayout(2, 2));
         JTextField textFieldNombre = new JTextField(10);
         JLabel labelNombre = new JLabel("Ingrese nombre: ");
         panel.add(labelNombre);
         panel.add(textFieldNombre);
-        panel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
 
         JTextField textFieldPrecio = new JTextField(10);
         JLabel labelPrecio = new JLabel("Ingrese precio: ");
         panel.add(labelPrecio);
         panel.add(textFieldPrecio);
 
-        int option = showConfirmDialog(null, panel, "Modificar cantidad", JOptionPane.OK_CANCEL_OPTION);
+        int option = showConfirmDialog(null, panel, "Registrar nuevo Artículo", JOptionPane.OK_CANCEL_OPTION);
 
         if (option == JOptionPane.OK_OPTION) {
             String nombre = textFieldNombre.getText();
@@ -301,6 +150,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
             try {
                 double precio = Double.parseDouble(precioStr);
+
+                if (precio == 0) {
+                    JOptionPane.showMessageDialog(null, "Error: el precio no puede ser 0.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return customDialogoNuevo(articulo);
+                }
 
                 articulo.setNombre(nombre);
                 articulo.setPrecio(new BigDecimal(precio));
@@ -364,7 +218,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         JTable tablaNuevoOrden = new TablaCustom(this);
         JScrollPane scrollPane = new JScrollPane(tablaNuevoOrden);
 
-//        jTabbedPane.addTab("Pedido " + jTabbedPane.getTabCount(), scrollPane);
         jTabbedPane.insertTab("Pedido " + jTabbedPane.getTabCount(), null, scrollPane, null, jTabbedPane.getTabCount() - 1);
         jTabbedPane.setSelectedIndex(jTabbedPane.getTabCount() - 2);
     }
@@ -392,7 +245,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         } else {
             //Nueva OptionPane para Introducir nombre y precio
             if (customDialogoNuevo(articulo)) {
-                if (!GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_articulo, articulo)) {
+                if (!GestorBDD.articuloEjecutarCRUD(conn, SQL.sql_insertar_articulo, articulo)) {
                     JOptionPane.showMessageDialog(null, "Error al intentar introducir el\narticulo en la BDD.", "Error", JOptionPane.ERROR_MESSAGE);
                     return false;
                 }
@@ -446,11 +299,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             PrintService[] printServices = PrinterJob.lookupPrintServices();
 
             if (printServices != null && printServices.length > 0) {
-//                System.out.println("Impresoras disponibles:");
-//                for (PrintService printService : printServices) {
-//                    String nombreImpresora = printService.getAttribute(PrinterName.class).getValue();
-//                    System.out.println(nombreImpresora);
-//                }
 
                 // Obtener el servicio de impresión predeterminado
                 PrintService defaultPrintService = PrintServiceLookup.lookupDefaultPrintService();
@@ -525,6 +373,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setMinimumSize(new java.awt.Dimension(1161, 600));
         setSize(new java.awt.Dimension(0, 0));
+        addFocusListener(new java.awt.event.FocusAdapter() {
+            public void focusGained(java.awt.event.FocusEvent evt) {
+                formFocusGained(evt);
+            }
+        });
 
         jPanelControles.setBackground(new java.awt.Color(204, 204, 204));
 
@@ -831,9 +684,19 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         );
 
         jMenuArticulos.setText("Artículos");
+        jMenuArticulos.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuArticulosMouseClicked(evt);
+            }
+        });
         jMenuBar1.add(jMenuArticulos);
 
         jMenuVentas.setText("Ventas");
+        jMenuVentas.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jMenuVentasMouseClicked(evt);
+            }
+        });
         jMenuBar1.add(jMenuVentas);
 
         jMenuConexion.setText("Conexión");
@@ -905,8 +768,18 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuAyudaMousePressed
 
     private void jMenuConexionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuConexionMouseClicked
-        DialogoConexion dialogo = new DialogoConexion(this, true);
-        dialogo.setVisible(true);
+        String ip = "no obtenido";
+
+        try (DatagramSocket datagramSocket = new DatagramSocket()) {
+            datagramSocket.connect(InetAddress.getByName("8.8.8.8"), 12345);
+            ip = datagramSocket.getLocalAddress().getHostAddress();
+        } catch (SocketException | UnknownHostException e) {
+            Exceptions.printStackTrace(e);
+        }
+
+        JOptionPane.showMessageDialog(null, "El IP para conectarse es:\n" + ip, "IP local", JOptionPane.INFORMATION_MESSAGE);
+//        DialogoConexion dialogo = new DialogoConexion(this, true);
+//        dialogo.setVisible(true);
     }//GEN-LAST:event_jMenuConexionMouseClicked
 
     private void jButtonMostrarReciboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMostrarReciboActionPerformed
@@ -945,9 +818,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         Map<Articulo, Integer> articulos = table.listarID();
         Venta venta = new Venta(new BigInteger(table.getID_VENTA()), LocalDateTime.now());
 
-        if (GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_venta, venta)) {
+        if (GestorBDD.ventaEjecutarCRUD(conn, SQL.sql_insertar_venta, venta)) {
             for (Map.Entry<Articulo, Integer> entry : articulos.entrySet()) {
-                if (!GestorBDD.ejecutarCRUD(conn, SQL.sql_insertar_relacion, venta.getID(), entry.getKey().getID(), entry.getValue())) {
+                if (!GestorBDD.relacionEjecutarCRUD(conn, SQL.sql_insertar_relacion, venta.getID(), entry.getKey().getID(), entry.getValue())) {
                     //MENSAJE FALLADO, BORRAR TODAS LAS RELACIONES Y LA VENTA
                     JOptionPane.showMessageDialog(
                             null,
@@ -955,9 +828,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                             "Error",
                             JOptionPane.ERROR_MESSAGE);
                     articulos.forEach((articulo, cantidad) -> {
-                        GestorBDD.ejecutarCRUD(conn, SQL.sql_borrar_relacion, venta.getID(), articulo.getID(), 0);
+                        GestorBDD.relacionEjecutarCRUD(conn, SQL.sql_borrar_relacion, venta.getID(), articulo.getID(), 0);
                     });
-                    GestorBDD.ejecutarCRUD(conn, SQL.sql_borrar_venta, venta);
+                    GestorBDD.ventaEjecutarCRUD(conn, SQL.sql_borrar_venta, venta);
                     return;
                 }
             }
@@ -965,6 +838,44 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         generarTicket(new Ticket(articulos, venta, new BigDecimal(jTextFieldDescuento.getText()), new BigDecimal(jTextFieldRecibido.getText())));
         cerrarCurrentTab();
     }//GEN-LAST:event_jButtonConfirmarVentaActionPerformed
+
+    private void jMenuArticulosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuArticulosMouseClicked
+        VentanaArticulos ventanaArticulos = new VentanaArticulos(conn);
+        ventanaArticulos.setVisible(true);
+    }//GEN-LAST:event_jMenuArticulosMouseClicked
+
+    private void jMenuVentasMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuVentasMouseClicked
+        VentanaVentas ventanaVentas = new VentanaVentas(conn);
+        ventanaVentas.setVisible(true);
+    }//GEN-LAST:event_jMenuVentasMouseClicked
+
+    private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
+        // RECORRER TODAS LAS TABLAS ACTUALIZANDO ARTÍCULOS
+        for (int panel = 0; panel < jTabbedPane.getTabCount() - 1; panel++) {
+            JScrollPane selectedComponent = (JScrollPane) jTabbedPane.getComponentAt(panel);
+            TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
+            TableModel model = table.getModel();
+
+            for (int row = 0; row < model.getRowCount(); row++) {
+                BigInteger id = new BigInteger(model.getValueAt(row, 0).toString());
+                int cantidad = (int)model.getValueAt(row, 3);
+                
+                Articulo articulo_bdd = GestorBDD.recuperarArticuloID(conn, id);
+                if (articulo_bdd == null) {
+                    // Algún error ha ocurrido y no se puede actualizar el Artículo, se sigue intentando con el resto.
+                    continue;
+                }
+                
+                String nombre = articulo_bdd.getNombre();
+                BigDecimal precio = articulo_bdd.getPrecio().setScale(2, RoundingMode.HALF_EVEN);
+                BigDecimal precioTotal = precio.multiply(BigDecimal.valueOf(cantidad)).setScale(2, RoundingMode.HALF_EVEN);
+                
+                model.setValueAt(nombre, row, 1);
+                model.setValueAt(precio, row, 2);
+                model.setValueAt(precioTotal, row, 4);
+            }
+        }
+    }//GEN-LAST:event_formFocusGained
 
     /**
      * @param args the command line arguments
