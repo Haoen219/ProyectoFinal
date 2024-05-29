@@ -74,7 +74,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher((KeyEvent e) -> {
             if (e.getID() == KeyEvent.KEY_PRESSED) {
                 if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_N) {
-                    createNewTab();
+                    crearNuevoTab();
                 }
                 if (e.isControlDown() && e.getKeyCode() == KeyEvent.VK_X) {
                     cerrarCurrentTab();
@@ -105,20 +105,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        createNewTab();
-    }
-
-    public void cerrarCurrentTab() {
-        int index = jTabbedPane.getSelectedIndex();
-        if (jTabbedPane.getTabCount() > 1 && index != jTabbedPane.getTabCount() - 1) {
-            jTabbedPane.remove(index);
-
-            if (index == 0) {
-                jTabbedPane.setSelectedIndex(index);
-            } else if (jTabbedPane.getTabCount() > 1) {
-                jTabbedPane.setSelectedIndex(index - 1);
-            }
-        }
+        crearNuevoTab();
     }
 
     public boolean customDialogoNuevo(Articulo articulo) {
@@ -214,12 +201,29 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         return true;
     }
 
-    private void createNewTab() {
+    private void crearNuevoTab() {
         JTable tablaNuevoOrden = new TablaCustom(this);
         JScrollPane scrollPane = new JScrollPane(tablaNuevoOrden);
 
         jTabbedPane.insertTab("Pedido " + jTabbedPane.getTabCount(), null, scrollPane, null, jTabbedPane.getTabCount() - 1);
         jTabbedPane.setSelectedIndex(jTabbedPane.getTabCount() - 2);
+    }
+
+    public void cerrarCurrentTab() {
+        int index = jTabbedPane.getSelectedIndex();
+        if (jTabbedPane.getTabCount() > 1 && index != jTabbedPane.getTabCount() - 1) {
+            jTabbedPane.remove(index);
+
+            if (jTabbedPane.getTabCount() == 1) {
+                crearNuevoTab();
+            }
+
+            if (index == 0) {
+                jTabbedPane.setSelectedIndex(index);
+            } else if (jTabbedPane.getTabCount() > 1) {
+                jTabbedPane.setSelectedIndex(index - 1);
+            }
+        }
     }
 
     public boolean actualizarArticuloTable(JTable table, Articulo articulo, int cantidadSuma) {
@@ -322,6 +326,33 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         } catch (PrinterException e) {
             Funciones.mostrarExcepcion(e);
+        }
+    }
+
+    public void actualizarArticulo(Articulo articuloNuevo, boolean borrar) {
+        // RECORRER TODAS LAS TABLAS ACTUALIZANDO ARTÍCULOS
+        for (int panel = 0; panel < jTabbedPane.getTabCount() - 1; panel++) {
+            JScrollPane selectedComponent = (JScrollPane) jTabbedPane.getComponentAt(panel);
+            TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
+            DefaultTableModel model = (DefaultTableModel) table.getModel();
+
+            for (int row = 0; row < model.getRowCount(); row++) {
+                BigInteger id = new BigInteger(model.getValueAt(row, 0).toString());
+                
+                if (borrar) {
+                    model.removeRow(row);
+                } else if (id.equals(articuloNuevo.getID())) {
+                    int cantidad = (int) model.getValueAt(row, 3);
+
+                    String nombre = articuloNuevo.getNombre();
+                    BigDecimal precio = articuloNuevo.getPrecio();
+                    BigDecimal precioTotal = precio.multiply(BigDecimal.valueOf(cantidad)).setScale(2, RoundingMode.HALF_EVEN);
+
+                    model.setValueAt(nombre, row, 1);
+                    model.setValueAt(precio, row, 2);
+                    model.setValueAt(precioTotal, row, 4);
+                }
+            }
         }
     }
 
@@ -655,7 +686,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         botonNewTab.setPreferredSize(new Dimension(30, 30));
         botonNewTab.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                createNewTab();
+                crearNuevoTab();
             }
         });
 
@@ -840,7 +871,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jButtonConfirmarVentaActionPerformed
 
     private void jMenuArticulosMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuArticulosMouseClicked
-        VentanaArticulos ventanaArticulos = new VentanaArticulos(conn);
+        VentanaArticulos ventanaArticulos = new VentanaArticulos(conn, this);
         ventanaArticulos.setVisible(true);
     }//GEN-LAST:event_jMenuArticulosMouseClicked
 
@@ -850,31 +881,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     }//GEN-LAST:event_jMenuVentasMouseClicked
 
     private void formFocusGained(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_formFocusGained
-        // RECORRER TODAS LAS TABLAS ACTUALIZANDO ARTÍCULOS
-        for (int panel = 0; panel < jTabbedPane.getTabCount() - 1; panel++) {
-            JScrollPane selectedComponent = (JScrollPane) jTabbedPane.getComponentAt(panel);
-            TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
-            TableModel model = table.getModel();
 
-            for (int row = 0; row < model.getRowCount(); row++) {
-                BigInteger id = new BigInteger(model.getValueAt(row, 0).toString());
-                int cantidad = (int)model.getValueAt(row, 3);
-                
-                Articulo articulo_bdd = GestorBDD.recuperarArticuloID(conn, id);
-                if (articulo_bdd == null) {
-                    // Algún error ha ocurrido y no se puede actualizar el Artículo, se sigue intentando con el resto.
-                    continue;
-                }
-                
-                String nombre = articulo_bdd.getNombre();
-                BigDecimal precio = articulo_bdd.getPrecio().setScale(2, RoundingMode.HALF_EVEN);
-                BigDecimal precioTotal = precio.multiply(BigDecimal.valueOf(cantidad)).setScale(2, RoundingMode.HALF_EVEN);
-                
-                model.setValueAt(nombre, row, 1);
-                model.setValueAt(precio, row, 2);
-                model.setValueAt(precioTotal, row, 4);
-            }
-        }
     }//GEN-LAST:event_formFocusGained
 
     /**

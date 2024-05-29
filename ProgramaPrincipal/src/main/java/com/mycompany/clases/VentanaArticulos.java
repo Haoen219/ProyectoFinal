@@ -5,8 +5,10 @@
 package com.mycompany.clases;
 
 import com.mycompany.GestorBDD;
+import com.mycompany.PantallaPrincipal;
 import com.mycompany.SQL.SQL;
 import com.mycompany.modelos.Articulo;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -18,9 +20,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import static javax.swing.JOptionPane.showConfirmDialog;
+import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import org.openide.util.Exceptions;
 
@@ -29,7 +36,7 @@ import org.openide.util.Exceptions;
  * @author haoen
  */
 public class VentanaArticulos extends javax.swing.JFrame {
-
+    PantallaPrincipal parent;
     Connection conn;
     DefaultTableModel model;
     String[] columnNames = {"id", "Nombre", "Precio Unitario"};
@@ -37,10 +44,10 @@ public class VentanaArticulos extends javax.swing.JFrame {
     /**
      * Creates new form VentanaVentas
      */
-    public VentanaArticulos(Connection conn) {
+    public VentanaArticulos(Connection conn, PantallaPrincipal parent) {
         initComponents();
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        
+
         // Hacer que todas las celdas no sean editables
         jTableArticulos.setDefaultEditor(Object.class, null);
 
@@ -68,6 +75,7 @@ public class VentanaArticulos extends javax.swing.JFrame {
                         @Override
                         public void actionPerformed(ActionEvent e) {
                             //DIALOGO PARA EDITAR ARTICULO
+                            editarArticulo(rowindex);
                         }
                     });
                     borrar.addActionListener(new ActionListener() {
@@ -86,6 +94,7 @@ public class VentanaArticulos extends javax.swing.JFrame {
             }
         });
 
+        this.parent = parent;
         this.conn = conn;
         this.model = new DefaultTableModel();
         this.jTableArticulos.setModel(model);
@@ -134,13 +143,63 @@ public class VentanaArticulos extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    private void borrarArticulo(int fila){
+
+    public boolean editarArticulo(int fila) {
+        JPanel panel = new JPanel(new GridLayout(2, 2));
+        JTextField textFieldNombre = new JTextField(10);
+        JLabel labelNombre = new JLabel("Ingrese nombre: ");
+        panel.add(labelNombre);
+        panel.add(textFieldNombre);
+
+        JTextField textFieldPrecio = new JTextField(10);
+        JLabel labelPrecio = new JLabel("Ingrese precio: ");
+        panel.add(labelPrecio);
+        panel.add(textFieldPrecio);
+
+        int option = showConfirmDialog(null, panel, "Registrar nuevo Artículo", JOptionPane.OK_CANCEL_OPTION);
+
+        if (option == JOptionPane.OK_OPTION) {
+            String nombre = textFieldNombre.getText();
+            String precioStr = textFieldPrecio.getText();
+
+            if (nombre.isEmpty() || precioStr.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Error: rellena los campos.", "Error", JOptionPane.ERROR_MESSAGE);
+                return editarArticulo(fila);
+            }
+            if (!precioStr.matches("^[0-9]+(\\.[0-9]{1,2})?$")) {
+                JOptionPane.showMessageDialog(null, "Error: valor no valido introducido.", "Error", JOptionPane.ERROR_MESSAGE);
+                return editarArticulo(fila);
+            }
+
+            try {
+                double precio = Double.parseDouble(precioStr);
+
+                if (precio == 0) {
+                    JOptionPane.showMessageDialog(null, "Error: el precio no puede ser 0.", "Error", JOptionPane.ERROR_MESSAGE);
+                    return editarArticulo(fila);
+                }
+
+                BigInteger id = (BigInteger) jTableArticulos.getValueAt(fila, 0);
+                Articulo articulo = new Articulo(id, nombre, BigDecimal.valueOf(precio));
+                GestorBDD.articuloEjecutarCRUD(conn, SQL.sql_modificar_articulo, articulo);
+                setArticulos(obtenerArticulos());
+                this.parent.actualizarArticulo(articulo, false);
+                return true;
+            } catch (NumberFormatException ex) {
+                JOptionPane.showMessageDialog(null, "Error: el precio debe ser\nun número válido.", "Error", JOptionPane.ERROR_MESSAGE);
+                return editarArticulo(fila);
+            }
+        }
+        return false;
+    }
+
+    private void borrarArticulo(int fila) {
         BigInteger id = (BigInteger) jTableArticulos.getValueAt(fila, 0);
         Articulo articulo = new Articulo(id, "", BigDecimal.ZERO);
-        if (GestorBDD.articuloEjecutarCRUD(conn, SQL.sql_borrar_articulo, articulo)){
+        if (GestorBDD.articuloEjecutarCRUD(conn, SQL.sql_borrar_articulo, articulo)) {
             GestorBDD.relacionEjecutarCRUD(conn, SQL.sql_borrar_relacion_articulo, BigInteger.ZERO, id, 0);
             setArticulos(obtenerArticulos());
+            this.parent.actualizarArticulo(articulo, true);
         }
     }
 
