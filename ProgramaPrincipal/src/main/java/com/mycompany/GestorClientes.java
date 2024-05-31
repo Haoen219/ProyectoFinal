@@ -5,7 +5,6 @@
 package com.mycompany;
 
 import static com.mycompany.clases.Funciones.mostrarExcepcion;
-import com.mycompany.PantallaPrincipal;
 import com.mycompany.modelos.Articulo;
 import java.io.BufferedReader;
 import java.io.IOException;

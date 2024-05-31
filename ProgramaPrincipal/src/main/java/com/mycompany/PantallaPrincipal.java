@@ -45,7 +45,6 @@ import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
-import javax.swing.table.TableModel;
 import org.openide.util.Exceptions;
 
 /**
@@ -63,7 +62,9 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     public PantallaPrincipal() {
         initComponents();
 
-        ImageIcon logo = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
+//        ImageIcon logo = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
+//        ImageIcon logo = new ImageIcon("src/main/resources/logo.png");
+        ImageIcon logo = new ImageIcon(getClass().getResource("/logo.png"));
         this.setIconImage(logo.getImage());
 
         gestorClientes = new GestorClientes(this, 1234);

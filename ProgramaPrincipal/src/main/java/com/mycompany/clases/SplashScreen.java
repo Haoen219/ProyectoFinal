@@ -4,8 +4,6 @@ package com.mycompany.clases;
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
-
-
 import java.awt.Image;
 import javax.swing.ImageIcon;
 
@@ -20,12 +18,14 @@ public class SplashScreen extends javax.swing.JDialog {
      */
     public SplashScreen() {
         initComponents();
-        
-        ImageIcon imagen = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
-        imagen = new ImageIcon(imagen.getImage().getScaledInstance(imagen.getIconWidth()/2, imagen.getIconHeight()/2, Image.SCALE_DEFAULT));
+
+//        ImageIcon imagen = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
+//        ImageIcon imagen = new ImageIcon("src/main/resources/logo.png");
+        ImageIcon imagen = new ImageIcon(getClass().getResource("/logo.png"));
+        imagen = new ImageIcon(imagen.getImage().getScaledInstance(imagen.getIconWidth() / 2, imagen.getIconHeight() / 2, Image.SCALE_DEFAULT));
 
         this.setSize(imagen.getIconWidth(), imagen.getIconHeight());
-        
+
         // Establecer el icono en el JLabel
         jLabel1.setIcon(imagen);
     }

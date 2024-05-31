@@ -23,10 +23,12 @@ public class DialogoError extends javax.swing.JDialog {
         initComponents();
         this.mensaje = mensaje;
         
-        ImageIcon logo = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
+//        ImageIcon logo = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
+        ImageIcon logo = new ImageIcon(getClass().getResource("/logo.png"));
         this.setIconImage(logo.getImage());
         
-        ImageIcon imagen = new ImageIcon("src/main/java/com/mycompany/imagenes/alert-circle.png");
+//        ImageIcon imagen = new ImageIcon("src/main/java/com/mycompany/imagenes/alert-circle.png");
+        ImageIcon imagen = new ImageIcon(getClass().getResource("/alert-circle.png"));
         Icon icono = new ImageIcon(imagen.getImage().getScaledInstance(61, 61, Image.SCALE_DEFAULT));
 
         // Establecer el icono en el JLabel

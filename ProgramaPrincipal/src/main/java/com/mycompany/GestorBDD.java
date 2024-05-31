@@ -25,7 +25,7 @@ import java.sql.Timestamp;
 public class GestorBDD {
 
     //dirección predefinida
-    private static String direccion = "jdbc:sqlite:bddArticulos.db";
+    private static String direccion = "jdbc:sqlite::resource:bddArticulos.db";
 
     public GestorBDD(String direccion) {
         //dirección indicada por el usuario
