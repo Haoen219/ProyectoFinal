@@ -19,7 +19,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import com.google.android.material.snackbar.Snackbar
+import com.iesma.dam2.test.moviesv2.navigation.AppNavigation
 import ies.mariaenriquez.programamovil.ui.theme.ProgramaMovilTheme
+import ies.mariaenriquez.programamovil.ui.viewmodel.ConexionViewModel
 import java.io.BufferedWriter
 import java.io.OutputStreamWriter
 import java.net.Socket
@@ -34,8 +36,9 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val gestorCliente = GestorCliente(this)
-                    Tabla(gestorCliente)
+                    val conexionViewModel: ConexionViewModel = ConexionViewModel(this)
+                    AppNavigation(conexionViewModel)
+                    Tabla(conexionViewModel)
                 }
             }
         }
@@ -48,21 +51,7 @@ fun Context.showSnackbar(message: String) {
     }
 }
 
-fun validarCampos(context: Context, texto: String): Boolean {
-    if (texto.isEmpty()) {
-        context.showSnackbar("Error: rellena los campos.")
-        return false
-    }
-    if (!texto.matches("[0-9]+".toRegex())) {
-        context.showSnackbar("Error: valor no válido introducido.")
-        return false
-    }
-    if (texto.length > 19) {    //19 porque en la BD BIGINT puede tener max. 19 dígitos.
-        context.showSnackbar("Error: Valor no válido para Núm. Barra.")
-        return false
-    }
-    return true
-}
+
 
 class GestorCliente(val context: Context) : Runnable {
     val serverAddress = "192.168.1.132"
@@ -91,6 +80,7 @@ class GestorCliente(val context: Context) : Runnable {
         }
     }
 
+    /*
     fun enviarMensaje(message: String) {
         try {
             if (validarCampos(context, message)){
@@ -103,34 +93,10 @@ class GestorCliente(val context: Context) : Runnable {
             context.showSnackbar("Error al enviar mensaje: ${e.message}")
         }
     }
+     */
 }
 
 @Composable
-fun Tabla(gestorCliente: GestorCliente) {
-    val texto = remember { mutableStateOf("") }
+fun Tabla(conexionViewModel: ConexionViewModel) {
 
-    Thread(gestorCliente).start();
-
-    // Función para establecer el texto del TextField
-    val setTexto: (String) -> Unit = { nuevoTexto ->
-        texto.value = nuevoTexto
-    }
-
-    LazyColumn {
-        item {
-            TextField(value = texto.value, onValueChange = { setTexto(it) })
-        }
-        item {
-            Button(
-                onClick = {
-                    Thread {
-                        gestorCliente.enviarMensaje(texto.value)
-                    }.start()
-                },
-                content = {
-                    Text(text = "Enviar")
-                }
-            )
-        }
-    }
 }

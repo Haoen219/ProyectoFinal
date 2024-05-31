@@ -386,7 +386,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jButtonConfirmarVenta = new javax.swing.JButton();
         jLabelErrorVenta = new javax.swing.JLabel();
         jButtonRecibir = new javax.swing.JButton();
-        jButtonMostrarRecibo = new javax.swing.JButton();
         jTextFieldDescuento = new javax.swing.JTextField();
         jLabelTotal_num = new javax.swing.JLabel();
         jLabelDevolver_num = new javax.swing.JLabel();
@@ -396,8 +395,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         jMenuArticulos = new javax.swing.JMenu();
         jMenuVentas = new javax.swing.JMenu();
         jMenuConexion = new javax.swing.JMenu();
-        jMenuConfiguracion = new javax.swing.JMenu();
-        jMenuAyuda = new javax.swing.JMenu();
 
         jButton1.setText("jButton1");
 
@@ -545,14 +542,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
             }
         });
 
-        jButtonMostrarRecibo.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
-        jButtonMostrarRecibo.setText("Mostrar recibo");
-        jButtonMostrarRecibo.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButtonMostrarReciboActionPerformed(evt);
-            }
-        });
-
         jTextFieldDescuento.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jTextFieldDescuento.setHorizontalAlignment(javax.swing.JTextField.RIGHT);
         jTextFieldDescuento.addActionListener(new ActionListener() {
@@ -601,15 +590,14 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                                 .addGap(44, 44, 44)))
                         .addGroup(jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                             .addComponent(jLabelTotal_num, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jTextFieldDescuento, javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jTextFieldDescuento, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 330, Short.MAX_VALUE)
                             .addComponent(jTextFieldRecibido, javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabelDevolver_num, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                         .addGap(10, 10, 10)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(jButtonConfirmarVenta, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonRecibir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButtonMostrarRecibo, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jButtonRecibir, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.PREFERRED_SIZE, 203, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(17, 17, 17))
         );
         jPanelVentaLayout.setVerticalGroup(
@@ -618,8 +606,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                 .addContainerGap(23, Short.MAX_VALUE)
                 .addGroup(jPanelVentaLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
                     .addGroup(jPanelVentaLayout.createSequentialGroup()
-                        .addComponent(jButtonMostrarRecibo, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonRecibir, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jButtonConfirmarVenta, javax.swing.GroupLayout.PREFERRED_SIZE, 41, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -738,17 +724,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         });
         jMenuBar1.add(jMenuConexion);
 
-        jMenuConfiguracion.setText("Configuración");
-        jMenuBar1.add(jMenuConfiguracion);
-
-        jMenuAyuda.setText("Ayuda");
-        jMenuAyuda.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mousePressed(java.awt.event.MouseEvent evt) {
-                jMenuAyudaMousePressed(evt);
-            }
-        });
-        jMenuBar1.add(jMenuAyuda);
-
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -794,10 +769,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         }
     }//GEN-LAST:event_jTabbedPaneMousePressed
 
-    private void jMenuAyudaMousePressed(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuAyudaMousePressed
-
-    }//GEN-LAST:event_jMenuAyudaMousePressed
-
     private void jMenuConexionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jMenuConexionMouseClicked
         String ip = "no obtenido";
 
@@ -812,10 +783,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 //        DialogoConexion dialogo = new DialogoConexion(this, true);
 //        dialogo.setVisible(true);
     }//GEN-LAST:event_jMenuConexionMouseClicked
-
-    private void jButtonMostrarReciboActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonMostrarReciboActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_jButtonMostrarReciboActionPerformed
 
     private void jButtonRecibirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonRecibirActionPerformed
         if (!validarCamposVenta()) {
@@ -943,7 +910,6 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton jButton1;
     private javax.swing.JButton jButtonAgregarArticulo;
     private javax.swing.JButton jButtonConfirmarVenta;
-    private javax.swing.JButton jButtonMostrarRecibo;
     private javax.swing.JButton jButtonRecibir;
     private javax.swing.JLabel jLabelCantidad;
     private javax.swing.JLabel jLabelDescuento;
@@ -958,10 +924,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabelTotal;
     private javax.swing.JLabel jLabelTotal_num;
     private javax.swing.JMenu jMenuArticulos;
-    private javax.swing.JMenu jMenuAyuda;
     private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JMenu jMenuConexion;
-    private javax.swing.JMenu jMenuConfiguracion;
     private javax.swing.JMenu jMenuVentas;
     private javax.swing.JPanel jPanelBase;
     private javax.swing.JPanel jPanelControles;
