@@ -1,3 +1,40 @@
 <resources>
-    <string name="app_name">ProgramaMovil</string>
+    <string name="app_name">Z Cash Scanner</string>
+
+    <string name="Connection_Screen">Pantalla de Conexión</string>
+    <string name="Scanner_Screen">Pantalla de Escáner</string>
+
+    <string name="logo_Description">Logo del programa</string>
+    <string name="menu_Description">Icono del menú</string>
+    <string name="wifi_Description">Icono de la pantalla de conexión</string>
+    <string name="scanner_Description">Icono de la pantalla de conexión</string>
+
+    <string name="connection_text">Connection</string>
+    <string name="scanner_text">Scanner</string>
+
+    <string name="TopBar_Conection">Conexión</string>
+    <string name="TopBar_Scanner">Escáner</string>
+
+    <string name="Conextion_Conected">Conectado</string>
+    <string name="Conextion_Disconected">Desconectado</string>
+
+    <string name="Conextion_Intruction">Introduzca el IP:</string>
+    <string name="Conextion_TextField_Label">IP Address</string>
+    <string name="Conextion_Button">Conectar</string>
+
+    <string name="Conextion_Last_Conection">Última conexión</string>
+    <string name="Conextion_Last_Conection_Button">Conectar a última IP</string>
+
+    <string name="Scanner_Permission_TRUE">Camera Permission permanently denied</string>
+    <string name="Scanner_Permission_FALSE">No Camera Permission</string>
+
+    <string name="Camera_View_Log">BarcodeAnalyzer</string>
+    <string name="Camera_View_Msg">Barcode analysis failed</string>
+
+    <string name="Conexion_View_Toast_Conect">Error al iniciar conexión:</string>
+    <string name="Conexion_View_Toast_Send">Error al enviar mensaje:</string>
+    <string name="Conexion_View_Toast_Close">Error al cerrar conexión:</string>
+    <string name="Conexion_View_Toast_Text_Empty">Error: rellena los campos.</string>
+    <string name="Conexion_View_Toast_Text_NotValid">Error: valor no válido introducido.</string>
+    <string name="Conexion_View_Toast_Text_TooLong">Error: Valor no válido para Núm. Barra.</string>
 </resources>

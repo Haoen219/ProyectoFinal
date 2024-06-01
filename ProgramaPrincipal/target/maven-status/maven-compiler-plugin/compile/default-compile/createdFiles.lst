@@ -4,7 +4,6 @@ com\mycompany\clases\VentanaVentas$1$1.class
 com\mycompany\clases\TablaCustom$2.class
 com\mycompany\PantallaPrincipal$13.class
 com\mycompany\clases\VentanaArticulos.class
-com\mycompany\clases\DialogoConexion.class
 com\mycompany\clases\TablaCustom$2$2.class
 com\mycompany\PantallaPrincipal$14.class
 com\mycompany\PantallaPrincipal$8.class
@@ -12,6 +11,7 @@ com\mycompany\clases\SplashScreen.class
 com\mycompany\PantallaPrincipal$7.class
 com\mycompany\modelos\Venta.class
 com\mycompany\clases\TablaCustom$1.class
+com\mycompany\clases\VentanaVentas$4.class
 com\mycompany\clases\VentanaArticulos$1.class
 com\mycompany\clases\VentanaArticulos$1$1.class
 com\mycompany\PantallaPrincipal$16.class
@@ -31,7 +31,6 @@ com\mycompany\PantallaPrincipal$11.class
 com\mycompany\modelos\Ticket.class
 com\mycompany\clases\VentanaArticulos$3.class
 com\mycompany\PantallaPrincipal$3.class
-com\mycompany\clases\DialogoConexion$1.class
 com\mycompany\clases\Funciones.class
 com\mycompany\modelos\Articulo.class
 com\mycompany\PantallaPrincipal$2.class

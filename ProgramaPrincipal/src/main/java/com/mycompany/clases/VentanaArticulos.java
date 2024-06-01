@@ -66,7 +66,7 @@ public class VentanaArticulos extends javax.swing.JFrame {
                 if (rowindex < 0) {
                     return;
                 }
-                if (e.isPopupTrigger() && e.getComponent() instanceof JTable) {
+                if ((e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) && e.getComponent() instanceof JTable) {
                     JPopupMenu popupMenu = new JPopupMenu();
                     JMenuItem editar = new JMenuItem("Editar Artículo");
                     JMenuItem borrar = new JMenuItem("Borrar de la Base");

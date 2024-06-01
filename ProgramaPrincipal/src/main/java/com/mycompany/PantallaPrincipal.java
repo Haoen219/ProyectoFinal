@@ -33,6 +33,7 @@ import com.mycompany.clases.VentanaArticulos;
 import com.mycompany.clases.VentanaVentas;
 import com.mycompany.modelos.Ticket;
 import com.mycompany.modelos.Venta;
+import java.awt.print.PrinterAbortException;
 import java.awt.print.PrinterException;
 import java.awt.print.PrinterJob;
 import java.net.DatagramSocket;
@@ -325,6 +326,8 @@ public class PantallaPrincipal extends javax.swing.JFrame {
                         "Atención",
                         JOptionPane.INFORMATION_MESSAGE);
             }
+        } catch (PrinterAbortException e) {
+            //no hacer nada
         } catch (PrinterException e) {
             Funciones.mostrarExcepcion(e);
         }
@@ -339,7 +342,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
 
             for (int row = 0; row < model.getRowCount(); row++) {
                 BigInteger id = new BigInteger(model.getValueAt(row, 0).toString());
-                
+
                 if (borrar) {
                     model.removeRow(row);
                 } else if (id.equals(articuloNuevo.getID())) {

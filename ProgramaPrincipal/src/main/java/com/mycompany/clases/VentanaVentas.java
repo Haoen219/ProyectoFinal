@@ -64,7 +64,7 @@ public class VentanaVentas extends javax.swing.JFrame {
                 if (rowindex < 0) {
                     return;
                 }
-                if (e.isPopupTrigger() && e.getComponent() instanceof JTable) {
+                if ((e.isPopupTrigger() || e.getButton() == MouseEvent.BUTTON3) && e.getComponent() instanceof JTable) {
                     JPopupMenu popupMenu = new JPopupMenu();
                     JMenuItem borrar = new JMenuItem("Borrar de la Base");
 
@@ -125,6 +125,30 @@ public class VentanaVentas extends javax.swing.JFrame {
         }
 
         jTableVentas.setModel(model);
+    }
+    
+    private ArrayList<Object[]> obtenerVentasFiltro() {
+        String filtroValor = jTextFieldBuscar.getText();
+        ResultSet rs = GestorBDD.recuperarVentasFiltrado(conn, filtroValor);
+
+        ArrayList<Object[]> ventas = new ArrayList<>();
+        try {
+            while (rs.next()) {
+                Object[] registro = new Object[6];
+                registro[0] = rs.getLong("id");
+                registro[1] = rs.getTimestamp("Fecha");
+                registro[2] = rs.getString("Articulo");
+                registro[3] = rs.getInt("Cantidad");
+                registro[4] = rs.getDouble("Precio unitario");
+                registro[5] = rs.getDouble("Total");
+                ventas.add(registro);
+            }
+            return ventas;
+        } catch (SQLException ex) {
+            Exceptions.printStackTrace(ex);
+        }
+        System.out.println("null");
+        return null;
     }
 
     private ArrayList<Object[]> obtenerVentas() {
@@ -199,6 +223,11 @@ public class VentanaVentas extends javax.swing.JFrame {
         });
 
         jButtonBuscar.setText("Buscar");
+        jButtonBuscar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButtonBuscarActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -241,6 +270,10 @@ public class VentanaVentas extends javax.swing.JFrame {
         setSize(new java.awt.Dimension(1114, 511));
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
+
+    private void jButtonBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButtonBuscarActionPerformed
+        setVentas(obtenerVentasFiltro());
+    }//GEN-LAST:event_jButtonBuscarActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButtonBuscar;

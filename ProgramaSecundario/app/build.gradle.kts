@@ -50,7 +50,8 @@ android {
 }
 
 dependencies {
-    implementation("com.google.android.material:material:1.5.0")
+    implementation("androidx.compose.material:material:1.6.7")
+    implementation("androidx.compose.material3:material3:1.2.1")
     implementation("com.google.accompanist:accompanist-permissions:0.35.1-alpha")
 
     implementation ("androidx.camera:camera-camera2:1.2.2")
