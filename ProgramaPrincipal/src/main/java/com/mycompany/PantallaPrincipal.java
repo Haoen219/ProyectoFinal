@@ -40,6 +40,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
 import java.net.UnknownHostException;
+import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.Map;
 import javax.print.PrintService;
@@ -71,6 +72,11 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         gestorClientes = new GestorClientes(this, 1234);
         gestorClientes.start();
         conn = GestorBDD.conectar();
+        try {
+            conn.setAutoCommit(true);
+        } catch (SQLException ex) {
+            Exceptions.printStackTrace(ex);
+        }
 
         //Crear shortcuts
         KeyboardFocusManager.getCurrentKeyboardFocusManager().addKeyEventDispatcher((KeyEvent e) -> {

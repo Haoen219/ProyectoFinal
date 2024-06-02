@@ -9,6 +9,9 @@ import com.mycompany.SQL.SQL;
 import com.mycompany.modelos.Articulo;
 import com.mycompany.modelos.Venta;
 import java.math.BigInteger;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -30,11 +33,22 @@ public class GestorBDD {
     public GestorBDD(String direccion) {
         //dirección indicada por el usuario
         this.direccion = direccion;
+        
     }
 
     // Generador de conexiones
     public static Connection conectar() {
         Connection conn = null;
+        
+        // Obtener el directorio de documentos del usuario y actualizar la dirección de la base de datos
+        Path documentsDirectory = getDocumentsDirectory();
+        if (documentsDirectory != null) {
+            GestorBDD.direccion = "jdbc:sqlite:" + documentsDirectory.resolve("bddArticulos.db").toString();
+            System.out.println(GestorBDD.direccion);
+        } else {
+            System.out.println("No se pudo encontrar el directorio de documentos del usuario.");
+        }
+        
         try {
             conn = DriverManager.getConnection(direccion);
             System.out.println("Conexión con la BDD establecida.");
@@ -51,6 +65,25 @@ public class GestorBDD {
             mostrarExcepcion(e);
         }
         return conn;
+    }
+
+    private static Path getDocumentsDirectory() {
+        Path userHome = Paths.get(System.getProperty("user.home"));
+        Path[] possibleDocumentPaths = {
+            userHome.resolve("Documents"), // Inglés
+            userHome.resolve("Documentos"), // Español
+            userHome.resolve("Mis documentos") // Otra posibilidad en español
+        // Puedes añadir más posibilidades aquí según sea necesario para otros idiomas
+        };
+
+        // Intentar detectar el nombre correcto del directorio de documentos
+        for (Path path : possibleDocumentPaths) {
+            if (Files.exists(path)) {
+                return path;
+            }
+        }
+
+        return null; // Si no se encuentra ningún directorio de documentos conocido
     }
 
     //Permite ejecutar multiples comandos
@@ -237,50 +270,4 @@ public class GestorBDD {
         }
         return respuesta;
     }
-
-//    public static void main(String[] args) {
-//        GestorBDD gestor = new GestorBDD();
-//        Connection conn = gestor.conectar();
-//        
-//        Articulo articulo_test = new Articulo(70, "HaoenQPro", BigDecimal.valueOf(69.69));
-//        
-//        //ORIGINAL
-//        Articulo[] lista_articulos = recuperarArticulos(conn);
-//        System.out.println("primer Print");
-//        for (int i = 0; i< lista_articulos.length; i++) {
-//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-//        }
-//        System.out.println("---");
-//        //CREAR
-//        articuloEjecutarCRUD(conn, SQL.sql_insertar_articulo, articulo_test);
-//        
-//        lista_articulos = recuperarArticulos(conn);
-//        System.out.println("segundo Print");
-//        for (int i = 0; i< lista_articulos.length; i++) {
-//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-//        }
-//        System.out.println("---");
-//        //MODIFICAR
-//        articulo_test.setNombre("Hamogus");
-//        articulo_test.setPrecio(BigDecimal.valueOf(12.00));
-//        articuloEjecutarCRUD(conn, SQL.sql_modificar_articulo, articulo_test);
-//        
-//        lista_articulos = recuperarArticulos(conn);
-//        System.out.println("tercer Print");
-//        for (int i = 0; i< lista_articulos.length; i++) {
-//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-//        }
-//        System.out.println("---");
-//        //BORRAR
-//        articuloEjecutarCRUD(conn, SQL.sql_borrar_articulo, articulo_test);
-//        
-//        lista_articulos = recuperarArticulos(conn);
-//        System.out.println("tercer Print");
-//        for (int i = 0; i< lista_articulos.length; i++) {
-//            System.out.println(lista_articulos[i].getID() +"  "+ lista_articulos[i].getNombre() +"  "+ lista_articulos[i].getPrecio());
-//        }
-//        System.out.println("---");
-//        
-//        GestorBDD.desconectar(conn);
-//    }
 }

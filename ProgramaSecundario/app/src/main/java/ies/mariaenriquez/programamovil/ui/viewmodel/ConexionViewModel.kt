@@ -70,7 +70,10 @@ class ConexionViewModel(val context: Context) : ViewModel() {
                 withContext(Dispatchers.Main) {
                     context.showToast(context.getString(R.string.Conexion_View_Toast_Send)+" ${e.message}")
                 }
-                onDisconnect()
+                withContext(Dispatchers.Main) {     //ejecutarlo en main thread
+                    isConnected = false
+                    onDisconnect()
+                }
             }
         }
     }
@@ -79,7 +82,7 @@ class ConexionViewModel(val context: Context) : ViewModel() {
         try {
             writer?.close()
             socket?.close()
-            isConnected = true
+            isConnected = false
         } catch (e: Exception) {
             e.printStackTrace()
             context.showToast(context.getString(R.string.Conexion_View_Toast_Close)+" ${e.message}")
