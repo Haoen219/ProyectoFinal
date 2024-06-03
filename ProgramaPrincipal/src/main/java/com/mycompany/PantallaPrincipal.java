@@ -49,23 +49,14 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import org.openide.util.Exceptions;
 
-/**
- *
- * @author haoen
- */
 public class PantallaPrincipal extends javax.swing.JFrame {
 
     private GestorClientes gestorClientes;
     private Connection conn;
 
-    /**
-     * Creates new form PantallaPrincipal
-     */
     public PantallaPrincipal() {
         initComponents();
 
-//        ImageIcon logo = new ImageIcon("src/main/java/com/mycompany/imagenes/logo.png");
-//        ImageIcon logo = new ImageIcon("src/main/resources/logo.png");
         ImageIcon logo = new ImageIcon(getClass().getResource("/logo.png"));
         this.setIconImage(logo.getImage());
 
@@ -823,7 +814,7 @@ public class PantallaPrincipal extends javax.swing.JFrame {
         JScrollPane selectedComponent = (JScrollPane) jTabbedPane.getComponentAt(index);
         TablaCustom table = (TablaCustom) selectedComponent.getViewport().getView();
 
-        Map<Articulo, Integer> articulos = table.listarID();
+        Map<Articulo, Integer> articulos = table.listarArticulos();
         Venta venta = new Venta(new BigInteger(table.getID_VENTA()), LocalDateTime.now());
 
         if (GestorBDD.ventaEjecutarCRUD(conn, SQL.sql_insertar_venta, venta)) {

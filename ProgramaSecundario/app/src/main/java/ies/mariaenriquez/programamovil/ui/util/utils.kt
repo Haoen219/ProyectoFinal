@@ -3,6 +3,7 @@ package ies.mariaenriquez.programamovil.ui.util
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
+import android.media.MediaPlayer
 import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -164,6 +165,11 @@ fun DrawerContent(navController: NavHostController) {
     }
 }
 
+fun realizarSonido(context: Context, sonido :Int) {
+    val mediaPlayer = MediaPlayer.create(context, sonido) // Reemplaza un pitido usando el mp3
+    mediaPlayer.start()
+    mediaPlayer.setOnCompletionListener { mediaPlayer.release() }
+}
 
 fun Context.showToast(message: String) {
     (this as? Activity)?.runOnUiThread {

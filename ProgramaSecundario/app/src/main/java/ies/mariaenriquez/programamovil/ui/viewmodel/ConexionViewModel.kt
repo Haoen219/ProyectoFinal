@@ -2,10 +2,10 @@ package ies.mariaenriquez.programamovil.ui.viewmodel
 
 import android.content.Context
 import android.media.MediaPlayer
-import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ies.mariaenriquez.programamovil.R
+import ies.mariaenriquez.programamovil.ui.util.realizarSonido
 import ies.mariaenriquez.programamovil.ui.util.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -14,7 +14,7 @@ import java.io.BufferedWriter
 import java.io.OutputStreamWriter
 import java.net.Socket
 
-class ConexionViewModel(val context: Context) : ViewModel() {
+class ConexionViewModel(private val context: Context) : ViewModel() {
     private val puerto = 1234
 
     private var socket: Socket? = null
@@ -89,7 +89,7 @@ class ConexionViewModel(val context: Context) : ViewModel() {
         }
     }
 
-    fun validarCampos(context: Context, texto: String): Boolean {
+    private fun validarCampos(context: Context, texto: String): Boolean {
         if (texto.isEmpty()) {
             context.showToast(context.getString(R.string.Conexion_View_Toast_Text_Empty))
             return false
@@ -98,16 +98,10 @@ class ConexionViewModel(val context: Context) : ViewModel() {
             context.showToast(context.getString(R.string.Conexion_View_Toast_Text_NotValid)+" $texto")
             return false
         }
-        if (texto.length > 19) {    //19 porque en la BD BIGINT puede tener max. 19 dígitos.
+        if (texto.length > 18) {    //18 porque en la BD BIGINT puede tener max. 19 dígitos.
             context.showToast(context.getString(R.string.Conexion_View_Toast_Text_TooLong)+" $texto")
             return false
         }
         return true
     }
-}
-
-fun realizarSonido(context: Context, sonido :Int) {
-    val mediaPlayer = MediaPlayer.create(context, sonido) // Reemplaza un pitido usando el mp3
-    mediaPlayer.start()
-    mediaPlayer.setOnCompletionListener { mediaPlayer.release() }
 }

@@ -6,7 +6,6 @@ package com.mycompany.clases;
 
 import com.mycompany.GestorBDD;
 import com.mycompany.SQL.SQL;
-import com.mycompany.modelos.Articulo;
 import com.mycompany.modelos.Venta;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,7 +13,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -34,7 +32,6 @@ import org.openide.util.Exceptions;
  * @author haoen
  */
 public class VentanaVentas extends javax.swing.JFrame {
-
     Connection conn;
     DefaultTableModel model;
     String[] columnNames = {"id", "Fecha", "Artículo", "Precio Unitario", "Subtotal"};

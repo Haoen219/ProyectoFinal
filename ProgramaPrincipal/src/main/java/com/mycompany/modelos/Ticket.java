@@ -95,14 +95,6 @@ public class Ticket implements Printable {
         g.drawString(devueltoLine, 10, y);
         y += 15;
 
-//        g.drawString(" TOTAL: "+total+"€", 10, y);
-//        y += 15;
-//        g.drawString(" Descuento: "+descuento+"€", 10, y);
-//        y += 15;
-//        g.drawString(" Recibido: "+recibido+"€", 10, y);
-//        y += 15;
-//        g.drawString(" Devuelto: "+(total.subtract(recibido))+"€", 10, y);
-//        y += 15;
         g.drawString("------------------------------", 10, y);
         y += 15;
         g.drawString("     Gracias por la visita", 10, y);

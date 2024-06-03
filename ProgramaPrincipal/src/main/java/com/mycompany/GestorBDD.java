@@ -27,24 +27,16 @@ import java.sql.Timestamp;
  */
 public class GestorBDD {
 
-    //dirección predefinida
-    private static String direccion = "jdbc:sqlite::resource:bddArticulos.db";
-
-    public GestorBDD(String direccion) {
-        //dirección indicada por el usuario
-        this.direccion = direccion;
-        
-    }
-
     // Generador de conexiones
     public static Connection conectar() {
         Connection conn = null;
+        String direccion = "";
         
         // Obtener el directorio de documentos del usuario y actualizar la dirección de la base de datos
         Path documentsDirectory = getDocumentsDirectory();
         if (documentsDirectory != null) {
-            GestorBDD.direccion = "jdbc:sqlite:" + documentsDirectory.resolve("bddArticulos.db").toString();
-            System.out.println(GestorBDD.direccion);
+            direccion = "jdbc:sqlite:" + documentsDirectory.resolve("bddArticulos.db").toString();
+            System.out.println(direccion);
         } else {
             System.out.println("No se pudo encontrar el directorio de documentos del usuario.");
         }
@@ -122,9 +114,6 @@ public class GestorBDD {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             if (sql.startsWith("DELETE")) {
                 pstmt.setString(1, articulo.getID().toString());
-            } else if (sql.startsWith("BEGIN;")) {
-                pstmt.setString(1, articulo.getID().toString());
-                pstmt.setString(2, articulo.getID().toString());
             } else {
                 pstmt.setString(1, articulo.getNombre());
                 pstmt.setBigDecimal(2, articulo.getPrecio());
@@ -143,9 +132,6 @@ public class GestorBDD {
             PreparedStatement pstmt = conn.prepareStatement(sql);
             if (sql.startsWith("DELETE")) {
                 pstmt.setString(1, venta.getID().toString());
-            } else if (sql.startsWith("BEGIN;")) {
-                pstmt.setString(1, venta.getID().toString());
-                pstmt.setString(2, venta.getID().toString());
             } else {
                 pstmt.setTimestamp(1, Timestamp.valueOf(venta.getFecha()));
                 pstmt.setString(2, venta.getID().toString());

@@ -127,7 +127,7 @@ public class TablaCustom extends javax.swing.JTable {
         return total;
     }
 
-    public Map<Articulo, Integer> listarID() {
+    public Map<Articulo, Integer> listarArticulos() {
         Map<Articulo, Integer> articulos = new HashMap<>() {
         };
 
