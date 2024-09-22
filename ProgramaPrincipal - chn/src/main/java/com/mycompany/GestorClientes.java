@@ -4,6 +4,7 @@
  */
 package com.mycompany;
 
+import com.mycompany.SQL.SQL;
 import static com.mycompany.clases.Funciones.mostrarExcepcion;
 import com.mycompany.modelos.Articulo;
 import java.io.BufferedReader;
@@ -32,9 +33,9 @@ public class GestorClientes extends Thread {
             System.out.println("Servidor escuchando en todas las interfaces en el puerto " + puerto);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(
-                    null, 
+                    null,
                     "No se ha podido establecer la conexión del Gestor de Clientes.\nCompruebe que el programa no se esté ejecutando de forma repetida.",
-                    "Error al establecer Servidor", 
+                    "Error al establecer Servidor",
                     JOptionPane.ERROR_MESSAGE
             );
             mostrarExcepcion(e);
@@ -73,13 +74,62 @@ class ClienteHandler extends Thread {
             BufferedReader entrada = new BufferedReader(new InputStreamReader(clienteSocket.getInputStream()));
             PrintWriter salida = new PrintWriter(clienteSocket.getOutputStream(), true);
 
+//            String entradaCliente;
+//            while ((entradaCliente = entrada.readLine()) != null) {
+////                JOptionPane.showConfirmDialog(null, "Entrada del cliente: " + entradaCliente);
+//                
+//                parent.addArticulo(new Articulo(new BigInteger(entradaCliente), "", new BigDecimal(0)), 1);
+//            }
+//            System.out.println("Se ha desconectado cliente con IP: "+clienteSocket.getInetAddress());
             String entradaCliente;
             while ((entradaCliente = entrada.readLine()) != null) {
-//                JOptionPane.showConfirmDialog(null, "Entrada del cliente: " + entradaCliente);
-                
-                parent.addArticulo(new Articulo(new BigInteger(entradaCliente), "", new BigDecimal(0)), 1);
+
+                if (entradaCliente.startsWith("<<") && entradaCliente.contains(">>")) {
+                    // Extraer el comando, formato "<<" + COMMANDO + ">>"
+                    int finComando = entradaCliente.indexOf(">>") + 2;
+                    String comando = entradaCliente.substring(0, finComando);
+                    String datos = entradaCliente.substring(finComando).trim();
+
+                    switch (comando) {
+                        case "<<READ>>":      //buscar articulo
+                            Articulo articulo_bdd = GestorBDD.recuperarArticuloID(parent.getConnection(), (new BigInteger(datos)));
+                            if (articulo_bdd != null) {
+                                salida.println("<<FOUND>>" + articulo_bdd.toString());
+                            } else {
+                                salida.println("<<NOT_FOUND>>");
+                            }
+                            break;
+
+                        case "<<INSERT>>":      //registrar nuevo articulo
+                            Articulo articulo_nuevo = Articulo.fromString(datos);
+                            if (GestorBDD.articuloEjecutarCRUD(parent.getConnection(), SQL.sql_insertar_articulo, articulo_nuevo)) {
+                                salida.println("<<TRUE>>");
+                            } else {
+                                salida.println("<<FALSE>>");
+                            }
+                            break;
+
+                        case "<<UPDATE>>":      //editar artículo
+                            Articulo articulo_modificar = Articulo.fromString(datos);
+                            if (GestorBDD.articuloEjecutarCRUD(parent.getConnection(), SQL.sql_modificar_articulo, articulo_modificar)) {
+                                salida.println("<<TRUE>>");
+                            } else {
+                                salida.println("<<FALSE>>");
+                            }
+                            break;
+
+                        case "<<ADDCART>>":     //añadir al carrito
+                            parent.addArticulo(new Articulo(new BigInteger(entradaCliente), "", new BigDecimal(0)), 1);
+                            break;
+
+                        default:
+                            System.out.println("Comando no reconocido: " + comando);
+                            break;
+                    }
+                } else {
+                    System.out.println("Formato de mensaje no válido: " + entradaCliente);
+                }
             }
-            System.out.println("Se ha desconectado cliente con IP: "+clienteSocket.getInetAddress());
         } catch (IOException e) {
             e.printStackTrace();
         } finally {

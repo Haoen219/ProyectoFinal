@@ -67,6 +67,10 @@ public class PantallaPrincipal extends javax.swing.JFrame {
     private Connection conn;
     private Ticket ticketAnterior;
     private String almacen = "";
+    
+    public Connection getConnection(){
+        return this.conn;
+    }
 
     public PantallaPrincipal() {
         initComponents();
