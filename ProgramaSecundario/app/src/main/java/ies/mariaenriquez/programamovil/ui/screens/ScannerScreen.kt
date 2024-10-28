@@ -18,7 +18,17 @@ fun ScannerScreen(conexionViewModel: ConexionViewModel, onDisconnect: () -> Unit
     val cameraPermissionState = rememberPermissionState(android.Manifest.permission.CAMERA)
 
     if (cameraPermissionState.status.isGranted) {
-        CameraScreen(conexionViewModel, onDisconnect)
+        CameraScreen(
+            conexionViewModel,
+            onDisconnect,
+            onScanned = {
+                mensajeEscaneado ->
+                    conexionViewModel.enviarMensaje(
+                        mensajeEscaneado,
+                        onDisconnect
+                    )
+            }
+        )
     } else if (cameraPermissionState.status.shouldShowRationale) {
         Text(stringResource(id = R.string.Scanner_Permission_TRUE))
     } else {

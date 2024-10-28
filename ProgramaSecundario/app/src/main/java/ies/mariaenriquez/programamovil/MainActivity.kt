@@ -1,5 +1,6 @@
 package ies.mariaenriquez.programamovil
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.content.pm.ActivityInfo
 import androidx.activity.ComponentActivity
@@ -13,6 +14,7 @@ import ies.mariaenriquez.programamovil.ui.theme.ProgramaMovilTheme
 import ies.mariaenriquez.programamovil.ui.viewmodel.ConexionViewModel
 
 class MainActivity : ComponentActivity() {
+    @SuppressLint("SourceLockedOrientationActivity")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         requestedOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT

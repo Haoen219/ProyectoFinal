@@ -10,7 +10,9 @@ import ies.mariaenriquez.programamovil.ui.util.showToast
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.io.BufferedReader
 import java.io.BufferedWriter
+import java.io.InputStreamReader
 import java.io.OutputStreamWriter
 import java.net.Socket
 
@@ -71,6 +73,46 @@ class ConexionViewModel(private val context: Context) : ViewModel() {
                     context.showToast(context.getString(R.string.Conexion_View_Toast_Send)+" ${e.message}")
                 }
                 withContext(Dispatchers.Main) {     //ejecutarlo en main thread
+                    isConnected = false
+                    onDisconnect()
+                }
+            }
+        }
+    }
+
+    //Función para leer el mensaje enviado por el programa principal y procesar con la siguiente accion.
+    fun leerMensaje(onMensajeRecibido: (String) -> Unit, onDisconnect: () -> Unit) {
+        viewModelScope.launch(Dispatchers.IO) {
+            try {
+                if (socket == null || socket?.isConnected == false) {  // Comprobar si hay conexión
+                    withContext(Dispatchers.Main) {
+                        isConnected = false
+                        onDisconnect()
+                    }
+                    return@launch
+                }
+
+                val reader = BufferedReader(InputStreamReader(socket?.getInputStream())) // Inicializar el lector
+                val mensaje = reader.readLine() // Leer solo una línea del socket
+
+                if (mensaje != null) {
+                    withContext(Dispatchers.Main) {
+
+                        onMensajeRecibido(mensaje)
+
+                    }
+                } else {
+                    withContext(Dispatchers.Main) {
+                        isConnected = false
+                        onDisconnect() // Desconectar si no se recibe mensaje
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) {
+                    context.showToast(context.getString(R.string.Conexion_View_Toast_Receive) + " ${e.message}")
+                }
+                withContext(Dispatchers.Main) {
                     isConnected = false
                     onDisconnect()
                 }

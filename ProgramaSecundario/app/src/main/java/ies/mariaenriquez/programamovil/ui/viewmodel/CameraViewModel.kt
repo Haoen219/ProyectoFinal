@@ -28,7 +28,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @Composable
-fun CameraScreen(conexionViewModel: ConexionViewModel, onDisconnect: () -> Unit) {
+fun CameraScreen(conexionViewModel: ConexionViewModel, onDisconnect: () -> Unit, onScanned: (String) -> Unit) {
     val localContext = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     val cameraProviderFuture = remember { ProcessCameraProvider.getInstance(localContext) }
@@ -46,7 +46,7 @@ fun CameraScreen(conexionViewModel: ConexionViewModel, onDisconnect: () -> Unit)
                 .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
                 .build()
                 .apply {
-                    setAnalyzer(ContextCompat.getMainExecutor(context), BarcodeAnalyzer(context, conexionViewModel, onDisconnect))    //Definir el analizador con BarcodeAnalyzer
+                    setAnalyzer(ContextCompat.getMainExecutor(context), BarcodeAnalyzer(context, conexionViewModel, onDisconnect, onScanned))    //Definir el analizador con BarcodeAnalyzer
                 }
 
             val cameraProvider = cameraProviderFuture.get()
@@ -67,7 +67,8 @@ fun CameraScreen(conexionViewModel: ConexionViewModel, onDisconnect: () -> Unit)
 class BarcodeAnalyzer(
     private val context: Context,
     private val conexionViewModel: ConexionViewModel,
-    private val onDisconnect: () -> Unit
+    private val onDisconnect: () -> Unit,
+    private val onScanned: (String) -> Unit
 ) : ImageAnalysis.Analyzer {
 
     private val options = BarcodeScannerOptions.Builder()
@@ -91,7 +92,13 @@ class BarcodeAnalyzer(
                 .addOnSuccessListener { barcodes ->
                     for (barcode in barcodes) {
                         barcode.rawValue?.let {
+                            //Modificar esto para que ejecute la opcion de onScanned
                             conexionViewModel.enviarMensaje(it, onDisconnect)
+                            //onScanned = { mensajeEscaneado ->
+                            //        // Reutilizar la lógica de enviar mensaje
+                            //        myConexionViewModel.enviarMensaje(mensajeEscaneado, onDisconnect)
+                            //    }
+                            onScanned(it)
                         }
                     }
                 }

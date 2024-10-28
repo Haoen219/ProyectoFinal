@@ -37,4 +37,5 @@
     <string name="Conexion_View_Toast_Text_Empty">Error: rellena los campos.</string>
     <string name="Conexion_View_Toast_Text_NotValid">Error: valor no válido introducido.</string>
     <string name="Conexion_View_Toast_Text_TooLong">Error: Valor no válido para Núm. Barra.</string>
+    <string name="Conexion_View_Toast_Receive">Error al leer el mensaje</string>
 </resources>

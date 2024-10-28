@@ -8,6 +8,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import ies.mariaenriquez.programamovil.R
 import ies.mariaenriquez.programamovil.ui.screens.ConnectionScreen
+import ies.mariaenriquez.programamovil.ui.screens.DataScreen
+import ies.mariaenriquez.programamovil.ui.screens.EditorScreen
 import ies.mariaenriquez.programamovil.ui.screens.LoadingScreen
 import ies.mariaenriquez.programamovil.ui.screens.ScannerScreen
 import ies.mariaenriquez.programamovil.ui.util.Scaffold
@@ -30,7 +32,7 @@ fun AppNavigation (conexionViewModel: ConexionViewModel){
         }
         composable(route = AppScreens.ConnectionScreen.route){
             BackHandler(true) {
-                //No hacer nada
+                //desactivar la funcion de volver atras
             }
             Scaffold(navController = navController, titulo = stringResource(id = R.string.TopBar_Conection)) {
                 ConnectionScreen(
@@ -45,6 +47,40 @@ fun AppNavigation (conexionViewModel: ConexionViewModel){
             Scaffold(navController = navController, titulo = stringResource(id = R.string.TopBar_Scanner)) {
                 ScannerScreen(
                     conexionViewModel,
+                    onDisconnect = {
+                        navController.navigate(AppScreens.ConnectionScreen.route)
+                    }
+                )
+            }
+        }
+
+
+
+        composable(route = AppScreens.EditorScreen.route) {
+            Scaffold(navController = navController, titulo = stringResource(id = R.string.TopBar_Scanner)) {
+                BackHandler(true) {
+                    navController.navigate(AppScreens.ConnectionScreen.route)
+                }
+                EditorScreen(
+                    conexionViewModel,
+                    onDisconnect = {
+                        navController.navigate(AppScreens.ConnectionScreen.route)
+                    },
+                    onFound = { dataArticulo ->
+                        navController.navigate("data_screen/$dataArticulo")
+                    },
+                    onNotFound = { idArticulo ->
+                        navController.navigate("data_screen/$idArticulo")
+                    }
+                )
+            }
+        }
+        composable(route = AppScreens.DataScreen.route) { navBackStackEntry ->
+            val articulo = navBackStackEntry.arguments?.getString("articulo")       //recuperar el valor del {articulo} guardado en la ruta
+            Scaffold(navController = navController, titulo = stringResource(id = R.string.TopBar_Scanner)) {
+                DataScreen(
+                    conexionViewModel,
+                    articulo,
                     onDisconnect = {
                         navController.navigate(AppScreens.ConnectionScreen.route)
                     }
